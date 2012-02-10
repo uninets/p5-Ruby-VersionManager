@@ -1,0 +1,59 @@
+use 5.010;
+use feature 'say';
+use warnings;
+
+use lib 'lib';
+use Ruby::VersionManager::Version;
+use Module::Build;
+
+my $v = Ruby::VersionManager::Version->new;
+my @script_files = grep { -f and ! -d } glob 'script/*';
+
+my $builder = Module::Build->new(
+    module_name         => 'Ruby::VersionManager',
+    license             => 'perl',
+    dist_author         => q{mugen Kenichi <mugen.kenichi@uninets.eu>},
+    dist_version_from   => 'lib/Ruby/VersionManager.pm',
+    build_requires => {
+        'Test::More' => 0,
+    },
+    configure_requires => {
+        'Module::Build' => 0.38,
+    },
+    requires => {
+        'perl' => 5.010,
+        'YAML' => 0,
+        'Moo'  => 0,
+        'LWP'  => 0,
+    },
+    add_to_cleanup      => [ 'Ruby-VersionManager-* Build _build MYMETA.*' ],
+    create_makefile_pl => 'traditional',
+
+    meta_add => {
+        no_index => {
+            directory => ['t'],
+        },
+        version => $v->get,
+        release_status => 'unstable',
+    },
+    script_files => [@script_files],
+    meta_merge => {
+        provides => {
+            'Ruby::VersionManager' => {
+                file => 'lib/Ruby/VersionManager.pm',
+                version => $v->get,
+            },
+            'Ruby::VersionManager::Config' => {
+                file => 'lib/Ruby/VersionManager/Config.pm',
+                version => $v->get,
+            },
+            'Ruby::VersionManager::Version' => {
+                file => 'lib/Ruby/VersionManager/Version.pm',
+                version => $v->get,
+            },
+        },
+    },
+
+);
+
+$builder->create_build_script();
