@@ -97,3 +97,48 @@ sub list {
         }
     }
 }
+
+sub _guess_version {
+    my ($self) = @_;
+
+    my @rubies = ();
+    my $req_version = $self->ruby_version;
+    # 1.8 or 1.9?
+    for my $major_version (keys %{$self->available_rubies}){
+        if ($req_version =~ /$major_version/){
+            for my $ruby (@{$self->available_rubies->{$major_version}}){
+                push @rubies, [$major_version, $ruby] if $ruby =~ /$req_version/;
+            }
+        }
+    }
+
+    my $guess = ((sort @rubies)[-1]);
+
+    if (not $guess){
+        say "No matching version found. Valid versions:";
+        $self->list;
+
+        exit 1;
+    }
+
+    return $guess;
+}
+
+sub install {
+    my ($self) = @_;
+
+    my $version = $self->_guess_version;
+    $self->_fetch_ruby($version);
+
+}
+
+sub _fetch_ruby {
+    my ($self, $version) = @_;
+
+    my $url = 'ftp://ftp.ruby-lang.org/pub/ruby/'
+              . $version->[0]
+              . '/'
+              . $version->[1];
+    say $url;
+}
+

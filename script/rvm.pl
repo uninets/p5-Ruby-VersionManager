@@ -16,13 +16,13 @@ die "No action '$action'" unless grep { $_ eq $action } @valid_actions;
 
 my $ruby_version = '1.9';
 
-
-
 GetOptions(
     'r|ruby=s' => \$ruby_version,
 );
 
-my $rvm = Ruby::VersionManager->new;
+my $rvm = Ruby::VersionManager->new(
+    ruby_version => $ruby_version,
+);
 
 if ($action ~~ 'list'){
     $rvm->list;
@@ -34,3 +34,6 @@ if ($action ~~ 'updatedb'){
     exit 0;
 }
 
+if ($action ~~ 'install'){
+    $rvm->install;
+}

@@ -12,6 +12,7 @@ my @script_files = grep { -f and ! -d } glob 'script/*';
 my $builder = Module::Build->new(
     module_name         => 'Ruby::VersionManager',
     license             => 'perl',
+    dist_abstract       => 'Manage ruby versions',
     dist_author         => q{mugen Kenichi <mugen.kenichi@uninets.eu>},
     dist_version_from   => 'lib/Ruby/VersionManager.pm',
     build_requires => {
