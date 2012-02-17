@@ -26,6 +26,7 @@ my $builder = Module::Build->new(
         'YAML' => 0,
         'Moo'  => 0,
         'LWP'  => 0,
+        'LWP::Simple' => 0,
     },
     add_to_cleanup      => [ 'Ruby-VersionManager-* Build _build MYMETA.*' ],
     create_makefile_pl => 'traditional',
