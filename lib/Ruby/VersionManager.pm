@@ -14,9 +14,11 @@ use LWP::Simple;
 
 has rootdir => ( is => 'rw' );
 has ruby_version => ( is => 'rw' );
+has major_version => ( is => 'rw' );
 has rubygems_version => ( is => 'rw' );
 has available_rubies => ( is => 'rw' );
 has agent_string => ( is => 'rw' );
+has archive_type => ( is => 'rw' );
 
 sub BUILD {
     my ($self) = @_;
@@ -24,6 +26,7 @@ sub BUILD {
     $self->agent_string('Ruby::VersionManager/0.01');
     $self->_make_base or die;
     $self->_check_db or die;
+    $self->archive_type('.tar.bz2');
 }
 
 sub _make_base {
@@ -75,7 +78,9 @@ sub update_db {
         if ($res->is_success){
             $rubies->{$version} = [];
             for (grep { $_ ~~ /ruby-.*\.tar\.bz2/ } split '\n', $res->content){
-                push @{$rubies->{$version}}, (split ' ', $_)[-1];
+                my $at = $self->archive_type;
+                (my $ruby = $_) =~ s/(.*)$at/$1/;
+                push @{$rubies->{$version}}, (split ' ', $ruby)[-1];
             }
         }
     }
@@ -94,11 +99,62 @@ sub list {
 
     for (keys %rubies){
         say "Version $_:";
-        for (@{$rubies{$_}}){
-            (my $ruby = $_) =~ s/(.*)\.tar\.bz2/$1/;
+        my @rubies = $self->_sort_rubies( $rubies{$_} );
+        for (@rubies){
+            my $at = $self->archive_type;
+            (my $ruby = $_) =~ s/(.*)$at/$1/;
             say "\t$ruby";
         }
     }
+}
+
+sub _sort_rubies {
+    my ($self, $rubies) = @_;
+
+    my @sorted = ();
+    my $major_versions;
+
+    for (@$rubies){
+        my (undef, $major, $patchlevel) = split '-', $_;
+        $major_versions->{$major} = [] unless $major_versions->{$major};
+        push @{$major_versions->{$major}}, $patchlevel;
+    }
+
+    for my $version (sort { $a cmp $b } keys %{$major_versions}){
+        my @patchlevels = grep {
+                                defined $_
+                                &&
+                                $_ =~ /p\d{1,3}/
+                          } @{$major_versions->{$version}};
+        my @pre = grep {
+                        defined $_
+                        &&
+                        $_ =~ /preview\d{0,1}|rc\d{0,1}/
+                  } @{$major_versions->{$version}};
+        my @old = grep {
+                        defined $_
+                        &&
+                        $_ =~ /^\d/
+                  } @{$major_versions->{$version}};
+
+        my @numeric_levels;
+        for my $level (@patchlevels){
+            (my $num = $level) =~ s/p(\d+)/$1/;
+            push @numeric_levels, $num;
+        }
+
+        @patchlevels = ();
+        for (sort { $a <=> $b } @numeric_levels){
+            push @patchlevels, 'p' . $_;
+        }
+
+        for ( (sort { $a cmp $b } @old), @patchlevels, (sort { $a cmp $b } @pre) ){
+            push @sorted, "ruby-$version-$_";
+        }
+
+    }
+
+    return @sorted;
 }
 
 sub _guess_version {
@@ -110,12 +166,26 @@ sub _guess_version {
     for my $major_version (keys %{$self->available_rubies}){
         if ($req_version =~ /$major_version/){
             for my $ruby (@{$self->available_rubies->{$major_version}}){
-                push @rubies, [$major_version, $ruby] if $ruby =~ /$req_version/;
+                if ($ruby =~ /$req_version/){
+
+                    my $at = $self->archive_type;
+                    ($ruby = $ruby) =~ s/(.*)$at/$1/;
+
+                    if ($ruby eq $req_version){
+                        push @rubies, $ruby;
+                        last;
+                    }
+                    elsif ($ruby =~ /preview|rc\d?+/){
+                        next;
+                    }
+
+                    push @rubies, $ruby;
+                }
             }
         }
     }
 
-    my $guess = ((sort { $a->[1] cmp $b->[1] } @rubies)[-1]);
+    my $guess = ($self->_sort_rubies([@rubies]))[-1];
 
     if (not $guess){
         say "No matching version found. Valid versions:";
@@ -130,8 +200,10 @@ sub _guess_version {
 sub install {
     my ($self) = @_;
 
-    my $version = $self->_guess_version;
-    $self->ruby_version($version);
+    $self->ruby_version($self->_guess_version);
+    (my $major_version = $self->ruby_version) =~ s/ruby-(\d\.\d).*/$1/;
+    $self->major_version($major_version);
+
     $self->_fetch_ruby;
     $self->_unpack;
     $self->_make;
@@ -141,7 +213,8 @@ sub install {
 sub _unpack {
     my ($self) = @_;
 
-    system 'tar xf ' . $self->rootdir . '/source/' . $self->ruby_version->[1]
+    system 'tar xf ' . $self->rootdir . '/source/'
+            . $self->ruby_version . $self->archive_type
             . ' -C  '
             . $self->rootdir . '/source/';
 
@@ -151,6 +224,11 @@ sub _unpack {
 sub _make {
     my ($self) = @_;
 
+    my $prefix = $self->rootdir . '/rubies/' . $self->major_version . '/' . $self->ruby_version;
+
+    say $prefix;
+
+
     return 1;
 }
 
@@ -158,11 +236,12 @@ sub _fetch_ruby {
     my ($self) = @_;
 
     my $url = 'ftp://ftp.ruby-lang.org/pub/ruby/'
-              . $self->ruby_version->[0]
+              . $self->major_version
               . '/'
-              . $self->ruby_version->[1];
+              . $self->ruby_version
+              . $self->archive_type;
 
-    my $file = $self->rootdir . '/source/' . $self->ruby_version->[1];
+    my $file = $self->rootdir . '/source/' . $self->ruby_version . $self->archive_type;
 
     if ( -f $file ){
         return 1
