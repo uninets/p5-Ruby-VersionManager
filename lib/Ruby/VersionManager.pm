@@ -11,6 +11,7 @@ use YAML;
 use LWP::UserAgent;
 use HTTP::Request;
 use LWP::Simple;
+use Cwd qw'abs_path cwd';
 
 has rootdir => ( is => 'rw' );
 has ruby_version => ( is => 'rw' );
@@ -19,6 +20,7 @@ has rubygems_version => ( is => 'rw' );
 has available_rubies => ( is => 'rw' );
 has agent_string => ( is => 'rw' );
 has archive_type => ( is => 'rw' );
+has gemset => ( is => 'rw' );
 
 sub BUILD {
     my ($self) = @_;
@@ -27,6 +29,7 @@ sub BUILD {
     $self->_make_base or die;
     $self->_check_db or die;
     $self->archive_type('.tar.bz2');
+    $self->gemset('default') unless $self->gemset;
 }
 
 sub _make_base {
@@ -205,12 +208,15 @@ sub install {
     $self->major_version($major_version);
 
     $self->_fetch_ruby;
-    $self->_unpack;
-    $self->_make;
+    $self->_unpack_ruby;
+    $self->_make_install;
+
+    $self->_setup_environment;
+    $self->_install_rubygems;
 
 }
 
-sub _unpack {
+sub _unpack_ruby {
     my ($self) = @_;
 
     system 'tar xf ' . $self->rootdir . '/source/'
@@ -221,15 +227,84 @@ sub _unpack {
     return 1;
 }
 
-sub _make {
+sub _make_install {
     my ($self) = @_;
 
     my $prefix = $self->rootdir . '/rubies/' . $self->major_version . '/' . $self->ruby_version;
 
-    say $prefix;
+    my $cwd = cwd();
 
+    chdir $self->rootdir . '/source/' . $self->ruby_version;
+
+    system "./configure --enable-pthread --enable-shared --prefix=$prefix && make && make install";
+
+    chdir $cwd;
 
     return 1;
+}
+
+sub _setup_environment {
+    my ($self) = @_;
+
+    $ENV{RUBY_VERSION} = $self->ruby_version;
+    $ENV{GEM_PATH} = abs_path($self->rootdir) . '/gemsets/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version
+        . '/'
+        . $self->gemset;
+    $ENV{GEM_HOME} = abs_path($self->rootdir) . '/gemsets/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version
+        . '/'
+        . $self->gemset;
+    $ENV{MY_RUBY_HOME} = abs_path($self->rootdir)
+        . '/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version;
+    $ENV{PATH} = abs_path($self->rootdir)
+        . '/rubies/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version
+        . '/bin'
+        . ':'
+        . abs_path($self->rootdir)
+        . '/gemsets/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version
+        . '/'
+        . $self->gemset
+        . '/bin'
+        . ':'
+        . $ENV{PATH};
+
+    open my $rcfile, '>', $self->rootdir . '/var/ruby_vmanager.rc';
+    say $rcfile 'export RUBY_VERSION=' . $self->ruby_version;
+    say $rcfile 'export GEM_PATH=' . $ENV{GEM_PATH};
+    say $rcfile 'export GEM_HOME=' . $ENV{GEM_HOME};
+    say $rcfile 'export MY_RUBY_HOME=' . $ENV{MY_RUBY_HOME};
+    say $rcfile 'export PATH=' . abs_path($self->rootdir)
+        . '/rubies/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version
+        . '/bin'
+        . ':'
+        . abs_path($self->rootdir)
+        . '/gemsets/'
+        . $self->major_version
+        . '/'
+        . $self->ruby_version
+        . '/'
+        . $self->gemset
+        . '/bin'
+        . ':$PATH';
+
+    close $rcfile;
 }
 
 sub _fetch_ruby {
@@ -253,5 +328,31 @@ sub _fetch_ruby {
 
     return 1;
 
+}
+
+sub _install_rubygems {
+    my ($self) = @_;
+
+    unless (-f $ENV{MY_RUBY_HOME} . '/bin/gem'){
+        my $url = 'http://rubyforge.org/frs/download.php/70696/rubygems-1.3.7.tgz';
+        my $file = $self->rootdir . '/source/rubygems-1.3.7.tgz';
+
+        if ( -f $file ){
+            return 1;
+        }
+
+        my $result = LWP::Simple::getstore($url, $file);
+
+        die if $result != 200;
+
+        system 'tar xf ' . $file . ' -C ' . $self->rootdir . '/source/';
+
+        my $cwd = cwd();
+
+        chdir $self->rootdir . '/source/rubygems-1.3.7';
+        system 'ruby setup.rb';
+    }
+
+    return 1;
 }
 
