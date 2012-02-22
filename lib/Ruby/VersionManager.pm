@@ -30,9 +30,9 @@ sub BUILD {
     my $v = Ruby::VersionManager::Version->new;
 
     $self->agent_string('Ruby::VersionManager/' . $v->get);
+    $self->archive_type('.tar.bz2');
     $self->_make_base or die;
     $self->_check_db or die;
-    $self->archive_type('.tar.bz2');
     $self->gemset('default') unless $self->gemset;
 }
 

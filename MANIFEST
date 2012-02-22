@@ -3,6 +3,7 @@ Changes
 lib/Ruby/VersionManager.pm
 lib/Ruby/VersionManager/Config.pm
 lib/Ruby/VersionManager/Version.pm
+script/rvm.pl
 MANIFEST			This list of files
 README
 t/00-load.t
