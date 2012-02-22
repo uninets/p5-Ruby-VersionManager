@@ -309,6 +309,8 @@ sub _setup_environment {
         . ':$PATH';
 
     close $rcfile;
+
+    return 1;
 }
 
 sub _fetch_ruby {
@@ -341,13 +343,11 @@ sub _install_rubygems {
         my $url = 'http://rubyforge.org/frs/download.php/70696/rubygems-1.3.7.tgz';
         my $file = $self->rootdir . '/source/rubygems-1.3.7.tgz';
 
-        if ( -f $file ){
-            return 1;
+        unless ( -f $file ){
+            my $result = LWP::Simple::getstore($url, $file);
+            die if $result != 200;
         }
 
-        my $result = LWP::Simple::getstore($url, $file);
-
-        die if $result != 200;
 
         system 'tar xf ' . $file . ' -C ' . $self->rootdir . '/source/';
 
