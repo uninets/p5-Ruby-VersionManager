@@ -3,7 +3,7 @@ package Ruby::VersionManager::Config;
 use 5.010;
 use feature 'say';
 use warnings;
-use autodie
+use autodie;
 
 use Moo;
 use YAML;

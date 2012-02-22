@@ -1,0 +1,64 @@
+{
+   "abstract" : "Manage ruby versions",
+   "author" : [
+      "mugen Kenichi <mugen.kenichi@uninets.eu>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.112621",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Ruby-VersionManager",
+   "no_index" : {
+      "directory" : [
+         "t"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::More" : 0
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Cwd" : 0,
+            "LWP" : 0,
+            "LWP::Simple" : 0,
+            "Moo" : 0,
+            "YAML" : 0,
+            "perl" : "5.01"
+         }
+      }
+   },
+   "provides" : {
+      "Ruby::VersionManager" : {
+         "file" : "lib/Ruby/VersionManager.pm",
+         "version" : "v0.2.0"
+      },
+      "Ruby::VersionManager::Config" : {
+         "file" : "lib/Ruby/VersionManager/Config.pm",
+         "version" : "v0.2.0"
+      },
+      "Ruby::VersionManager::Version" : {
+         "file" : "lib/Ruby/VersionManager/Version.pm",
+         "version" : "v0.2.0"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "v0.02"
+}

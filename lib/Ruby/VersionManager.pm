@@ -13,6 +13,8 @@ use HTTP::Request;
 use LWP::Simple;
 use Cwd qw'abs_path cwd';
 
+use Ruby::VersionManager::Version;
+
 has rootdir => ( is => 'rw' );
 has ruby_version => ( is => 'rw' );
 has major_version => ( is => 'rw' );
@@ -25,7 +27,9 @@ has gemset => ( is => 'rw' );
 sub BUILD {
     my ($self) = @_;
 
-    $self->agent_string('Ruby::VersionManager/0.01');
+    my $v = Ruby::VersionManager::Version->new;
+
+    $self->agent_string('Ruby::VersionManager/' . $v->get);
     $self->_make_base or die;
     $self->_check_db or die;
     $self->archive_type('.tar.bz2');
@@ -355,4 +359,95 @@ sub _install_rubygems {
 
     return 1;
 }
+
+__END__
+
+=head1 NAME
+
+Ruby::VersionManager
+
+=head1 WARNING
+
+This is an unstable development release not ready for production!
+
+=head1 VERSION
+
+Version 0.02
+
+=head1 SYNOPSIS
+
+The Ruby::VersionManager Module will provide a subset of the bash rvm.
+
+=head1 INSTALL RUBY
+
+It is recommended to use Ruby::VersionManager with local::lib to avoid interference with possibly installed system ruby.
+Ruby::VersionManager comes with a script rvm.pl with following options.
+
+=head2 list
+
+List available ruby versions.
+
+    rvm.pl list
+
+=head2 updatedb
+
+Update database of available ruby versions.
+
+    rvm.pl updatedb
+
+=head2 install
+
+Install a ruby version. If no version is given the latest stable release will be installed.
+The program tries to guess the correct version from the provided string. It should at least match the major release.
+If you need to install a preview or rc version you will have to provide the full exact version.
+
+Latest ruby
+
+    rvm.pl install
+
+Latest ruby-1.8
+
+    rvm.pl install 1.8
+
+Install preview
+
+    rvm.pl install ruby-1.9.3-preview1
+
+
+=head1 LIMITATIONS AND TODO
+
+Currently Ruby::VersionManager is only running on Linux with bash installed.
+Support of gemsets and uninstall needs to be added.
+
+=head1 AUTHOR
+
+Mugen Kenichi, C<< <mugen.kenichi at uninets.eu> >>
+
+=head1 BUGS
+
+Report bugs at:
+
+=over 2
+
+=item * Ruby::VersionManager issue tracker
+
+L<https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+
+=item * support at uninets.eu
+
+C<< <mugen.kenichi at uninets.eu> >>
+
+=back
+
+=head1 SUPPORT
+
+=over 2
+
+=item * Technical support
+
+C<< <mugen.kenichi at uninets.eu> >>
+
+=back
+
+=cut
 

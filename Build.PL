@@ -5,16 +5,24 @@ use warnings;
 use lib 'lib';
 use Ruby::VersionManager::Version;
 use Module::Build;
+use Getopt::Long;
 
+my $install = 0;
+my $dist    = 0;
 my $v = Ruby::VersionManager::Version->new;
 my @script_files = grep { -f and ! -d } glob 'script/*';
+
+GetOptions(
+    'install' => \$install,
+    'dist'    => \$dist,
+);
 
 my $builder = Module::Build->new(
     module_name         => 'Ruby::VersionManager',
     license             => 'perl',
     dist_abstract       => 'Manage ruby versions',
     dist_author         => q{mugen Kenichi <mugen.kenichi@uninets.eu>},
-    dist_version_from   => 'lib/Ruby/VersionManager.pm',
+    dist_version_from   => 'lib/Ruby/VersionManager/Version.pm',
     build_requires => {
         'Test::More' => 0,
     },
@@ -25,6 +33,7 @@ my $builder = Module::Build->new(
         'perl' => 5.010,
         'YAML' => 0,
         'Moo'  => 0,
+        'Cwd'  => 0,
         'LWP'  => 0,
         'LWP::Simple' => 0,
     },
@@ -57,5 +66,18 @@ my $builder = Module::Build->new(
     },
 
 );
+
+if ($dist) {
+    $builder->dispatch('build');
+    $builder->dispatch('test');
+    $builder->dispatch('distmeta');
+    $builder->dispatch('dist');
+}
+
+if ($install) {
+    $builder->dispatch('build');
+    $builder->dispatch('test', verbose => 1);
+    $builder->dispatch('install');
+}
 
 $builder->create_build_script();

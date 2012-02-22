@@ -7,4 +7,3 @@ BEGIN {
     use_ok( 'Ruby::VersionManager::Config' ) || print "Bail out!\n";
 }
 
-diag( "Testing Ruby::VersionManager $Ruby::VersionManager::VERSION, Perl $], $^X" );
