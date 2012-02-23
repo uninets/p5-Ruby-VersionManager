@@ -19,13 +19,13 @@ no_index:
 provides:
   Ruby::VersionManager:
     file: lib/Ruby/VersionManager.pm
-    version: v0.3.2
+    version: v0.3.3
   Ruby::VersionManager::Config:
     file: lib/Ruby/VersionManager/Config.pm
-    version: v0.3.2
+    version: v0.3.3
   Ruby::VersionManager::Version:
     file: lib/Ruby/VersionManager/Version.pm
-    version: v0.3.2
+    version: v0.3.3
 requires:
   Cwd: 0
   LWP: 0
@@ -35,4 +35,4 @@ requires:
   perl: 5.01
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.03.02
+version: 0.03.03

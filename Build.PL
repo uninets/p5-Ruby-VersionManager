@@ -5,7 +5,7 @@ use warnings;
 use lib 'lib';
 use Ruby::VersionManager::Version;
 use Module::Build;
-use Getopt::Long;
+use Getopt::Long qw(:config pass_through);
 
 my $install = 0;
 my $dist    = 0;
