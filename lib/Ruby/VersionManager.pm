@@ -366,34 +366,42 @@ __END__
 
 Ruby::VersionManager
 
-=head1 WARNING
+=head1 WARNING!
 
 This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.03.03
+Version 0.03.04
 
 =head1 SYNOPSIS
 
 The Ruby::VersionManager Module will provide a subset of the bash rvm.
 
-=head1 INSTALL RUBY
-
 It is recommended to use Ruby::VersionManager with local::lib to avoid interference with possibly installed system ruby.
-Ruby::VersionManager comes with a script rvm.pl with following options.
+Ruby::VersionManager comes with a script rvm.pl. See the perldoc of rvm.pl for a list of actions and options.
+
+
+=head1 CONSTRUCTION
+
+All attributes are optional at creation.
+
+    my $rvm = Ruby::VersionManager->new;
+
+
+=head1 METHODS
 
 =head2 list
 
-List available ruby versions.
+Print a list of available ruby versions to STDOUT. (Will return a datastructure soon)
 
-    rvm.pl list
+    $rvm->list;
 
-=head2 updatedb
+=head2 update_db
 
 Update database of available ruby versions.
 
-    rvm.pl updatedb
+    $rvm->updatedb;
 
 =head2 install
 
@@ -403,20 +411,23 @@ If you need to install a preview or rc version you will have to provide the full
 
 Latest ruby
 
-    rvm.pl install
+    $rvm->ruby_version('1.9');
+    $rvm->install;
 
 Latest ruby-1.8
 
-    rvm.pl install 1.8
+    $rvm->ruby_version('1.8');
+    $rvm->install;
 
 Install preview
 
-    rvm.pl install ruby-1.9.3-preview1
+    $rvm->ruby_version('ruby-1.9.3-preview1');
+    $rvm->isntall;
 
 
 =head1 LIMITATIONS AND TODO
 
-Currently Ruby::VersionManager is only running on Linux with bash installed.
+Currently Ruby::VersionManager is only tested to be running on Linux with bash installed.
 Support of gemsets and uninstall needs to be added.
 
 =head1 AUTHOR

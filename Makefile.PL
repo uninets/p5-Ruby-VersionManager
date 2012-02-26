@@ -3,20 +3,20 @@ require 5.010;
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-  'PL_FILES' => {},
-  'INSTALLDIRS' => 'site',
   'NAME' => 'Ruby::VersionManager',
+  'VERSION_FROM' => 'lib/Ruby/VersionManager/Version.pm',
+  'PREREQ_PM' => {
+                   'Cwd' => 0,
+                   'LWP' => 0,
+                   'LWP::Simple' => 0,
+                   'Moo' => 0,
+                   'Test::More' => 0,
+                   'YAML' => 0
+                 },
+  'INSTALLDIRS' => 'site',
   'EXE_FILES' => [
                    'script/rvm.pl'
                  ],
-  'VERSION_FROM' => 'lib/Ruby/VersionManager/Version.pm',
-  'PREREQ_PM' => {
-                   'Test::More' => 0,
-                   'YAML' => 0,
-                   'Moo' => 0,
-                   'LWP::Simple' => 0,
-                   'LWP' => 0,
-                   'Cwd' => 0
-                 }
+  'PL_FILES' => {}
 )
 ;
