@@ -11,6 +11,7 @@ use YAML;
 use LWP::UserAgent;
 use HTTP::Request;
 use LWP::Simple;
+use File::Path;
 use Cwd qw'abs_path cwd';
 
 use Ruby::VersionManager::Version;
@@ -124,6 +125,40 @@ sub updatedb {
 
     $self->_check_db;
 
+}
+
+sub uninstall {
+    my ($self) = @_;
+
+    return 0 unless $self->ruby_version;
+
+    for my $major (keys %{$self->installed_rubies}){
+        for my $ruby (@{$self->installed_rubies->{$major}}){
+            if ($ruby eq $self->ruby_version){
+                $self->major_version($major);
+                $self->_remove_ruby;
+                $self->_remove_source;
+                $self->_check_installed;
+                $self->_update_installed;
+            }
+        }
+    }
+
+    return 1;
+}
+
+sub _remove_ruby {
+    my ($self) = @_;
+
+    my $dir_to_remove = $self->rootdir . '/rubies/' . $self->major_version . '/' . $self->ruby_version;
+
+    File::Path::rmtree($dir_to_remove) if -d $dir_to_remove;
+}
+
+sub _remove_source {
+    my ($self) = @_;
+
+    return 1;
 }
 
 sub list {
@@ -429,13 +464,12 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.03.04
+Version 0.03.05
 
 =head1 SYNOPSIS
 
 The Ruby::VersionManager Module will provide a subset of the bash rvm.
 
-It is recommended to use Ruby::VersionManager with local::lib to avoid interference with possibly installed system ruby.
 Ruby::VersionManager comes with a script rvm.pl. See the perldoc of rvm.pl for a list of actions and options.
 
 =head1 ATTRIBUTES
@@ -512,11 +546,18 @@ Install preview
     $rvm->ruby_version('ruby-1.9.3-preview1');
     $rvm->install;
 
+=head2 uninstall
+
+Remove a ruby version and the source dir including the downloaded archive.
+You have to provide the full exact version of the ruby you want to remove as shown with list.
+
+    $rvm->ruby_version('ruby-1.9.3-preview1');
+    $rvm->uninstall;
 
 =head1 LIMITATIONS AND TODO
 
 Currently Ruby::VersionManager is only tested to be running on Linux with bash installed.
-Support of gemsets and uninstall needs to be added.
+Better support of gemsets needs to be added.
 
 =head1 AUTHOR
 

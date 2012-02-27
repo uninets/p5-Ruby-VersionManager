@@ -7,6 +7,7 @@ WriteMakefile
   'VERSION_FROM' => 'lib/Ruby/VersionManager/Version.pm',
   'PREREQ_PM' => {
                    'Cwd' => 0,
+                   'File::Path' => 0,
                    'LWP' => 0,
                    'LWP::Simple' => 0,
                    'Moo' => 0,

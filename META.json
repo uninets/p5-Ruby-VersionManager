@@ -32,6 +32,7 @@
       "runtime" : {
          "requires" : {
             "Cwd" : 0,
+            "File::Path" : 0,
             "LWP" : 0,
             "LWP::Simple" : 0,
             "Moo" : 0,
@@ -43,15 +44,15 @@
    "provides" : {
       "Ruby::VersionManager" : {
          "file" : "lib/Ruby/VersionManager.pm",
-         "version" : "v0.3.4"
+         "version" : "v0.3.5"
       },
       "Ruby::VersionManager::Config" : {
          "file" : "lib/Ruby/VersionManager/Config.pm",
-         "version" : "v0.3.4"
+         "version" : "v0.3.5"
       },
       "Ruby::VersionManager::Version" : {
          "file" : "lib/Ruby/VersionManager/Version.pm",
-         "version" : "v0.3.4"
+         "version" : "v0.3.5"
       }
    },
    "release_status" : "stable",
@@ -60,5 +61,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.03.04"
+   "version" : "0.03.05"
 }

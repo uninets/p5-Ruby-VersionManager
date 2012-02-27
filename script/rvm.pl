@@ -8,7 +8,7 @@ use warnings;
 use Ruby::VersionManager;
 use Getopt::Long qw(:config pass_through);
 
-my @valid_actions = qw| list install updatedb |;
+my @valid_actions = qw| list install updatedb uninstall |;
 
 my $action = shift;
 my $arg = shift;
@@ -33,6 +33,14 @@ if ($action ~~ 'install'){
     $rvm->install;
 }
 
+if ($action ~~ 'uninstall'){
+    my $ruby_version = $arg;
+    die "no version defined" unless $ruby_version;
+
+    $rvm->ruby_version($ruby_version);
+    $rvm->uninstall;
+}
+
 __END__
 
 =head1 NAME
@@ -45,7 +53,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.03.04
+Version 0.03.05
 
 =head1 SYNOPSIS
 
@@ -86,11 +94,19 @@ Install preview
 
     rvm.pl install ruby-1.9.3-preview1
 
+=head2 uninstall
+
+Remove a ruby version and the source dir including the downloaded archive.
+You have to provide the full exact version of the ruby you want to remove as shown with list.
+
+    rvm.pl uninstall ruby-1.9.3-preview1
+
+If you uninstall your currently active ruby version you have to install/activate another version manually.
 
 =head1 LIMITATIONS AND TODO
 
 Currently Ruby::VersionManager is only running on Linux with bash installed.
-Support of gemsets and uninstall needs to be added.
+Better support of gemsets needs to be added.
 
 =head1 AUTHOR
 
