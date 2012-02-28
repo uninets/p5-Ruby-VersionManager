@@ -23,7 +23,7 @@ if ($action ~~ 'list'){
 }
 
 if ($action ~~ 'updatedb'){
-    $rvm->update_db;
+    $rvm->updatedb;
     exit 0;
 }
 
