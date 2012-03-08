@@ -5,43 +5,57 @@ use feature 'say';
 use warnings;
 use autodie;
 
-use Moo;
-use YAML;
+# placeholder
 
-has rootdir => ( is => 'rw' );
-has ruby_version => ( is => 'rw' );
-has rubygems_version => (is => 'rw' );
+1;
 
-sub BUILD {
-    my ($self) = @_;
+__END__
 
-    $self->_make_base or die;
-    $self->_check_db or die;
-}
+=head1 NAME
 
-sub _make_base {
-    my ($self) = @_;
+Ruby::VersionManager::Config
 
-    $self->rootdir($ENV{'HOME'} . '/.ruby_vmanager') unless $self->rootdir;
+=head1 WARNING!
 
-    if (not -d $self->rootdir){
-        say "root directory for installation not found.\nbootstraping to " . $self->rootdir;
-        mkdir $self->rootdir . '/bin' or return 0;
-        mkdir $self->rootdir . '/source' or return 0;
-        mkdir $self->rootdir . '/var' or return 0;
-        mkdir $self->rootdir . '/gemsets' or return 0;
-        mkdir $self->rootdir . '/rubies' or return 0;
-    }
+This is an unstable development release not ready for production!
 
-    return 1;
+=head1 VERSION
 
-}
+Version 0.003007
 
-sub _check_db {
-    my ($self) = @_;
+=head1 SYNOPSIS
 
-    $self->update_db unless -f $self->rootdir . '/var/db.yml';
+Ruby::VersionManager::Config is not yet in use.
 
+=head1 AUTHOR
 
-}
+Mugen Kenichi, C<< <mugen.kenichi at uninets.eu> >>
+
+=head1 BUGS
+
+Report bugs at:
+
+=over 2
+
+=item * Ruby::VersionManager issue tracker
+
+L<https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+
+=item * support at uninets.eu
+
+C<< <mugen.kenichi at uninets.eu> >>
+
+=back
+
+=head1 SUPPORT
+
+=over 2
+
+=item * Technical support
+
+C<< <mugen.kenichi at uninets.eu> >>
+
+=back
+
+=cut
 

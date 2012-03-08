@@ -53,7 +53,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.03.06
+Version 0.003007
 
 =head1 SYNOPSIS
 
@@ -93,6 +93,10 @@ Latest ruby-1.8
 Install preview
 
     rvm.pl install ruby-1.9.3-preview1
+
+To use the Ruby::VersionManager source ruby_vmanager.rc.
+
+    source ~/.ruby_vmanager/var/ruby_vmanager.rc
 
 =head2 uninstall
 

@@ -44,15 +44,15 @@
    "provides" : {
       "Ruby::VersionManager" : {
          "file" : "lib/Ruby/VersionManager.pm",
-         "version" : "v0.3.6"
+         "version" : "0.003007"
       },
       "Ruby::VersionManager::Config" : {
          "file" : "lib/Ruby/VersionManager/Config.pm",
-         "version" : "v0.3.6"
+         "version" : "0.003007"
       },
       "Ruby::VersionManager::Version" : {
          "file" : "lib/Ruby/VersionManager/Version.pm",
-         "version" : "v0.3.6"
+         "version" : "0.003007"
       }
    },
    "release_status" : "stable",
@@ -61,5 +61,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.03.06"
+   "version" : "0.003007"
 }

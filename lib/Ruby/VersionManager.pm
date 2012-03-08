@@ -356,7 +356,7 @@ sub _setup_environment {
         . '/'
         . $self->gemset;
     $ENV{MY_RUBY_HOME} = abs_path($self->rootdir)
-        . '/'
+        . '/rubies/'
         . $self->major_version
         . '/'
         . $self->ruby_version;
@@ -464,7 +464,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.03.06
+Version 0.003007
 
 =head1 SYNOPSIS
 
@@ -487,6 +487,24 @@ Preview and RC versions will never be installed automatically. You have to provi
 =head2 gemset
 
 Name your gemset. More sophisticated support for gemsets needs to be implemented.
+
+=head2 agent_string
+
+The user agent used when downloading ruby.
+Defaults to Ruby::VersionManager/0.003007.
+
+=head2 archive_type
+
+Type of the ruby archive to download.
+Defaults to .tar.bz2, valid are also .tar.gz and .zip.
+
+=head2 major_version
+
+Will be automatically set.
+
+=head2 rubygems_version
+
+Not yet in use.
 
 =head1 CONSTRUCTION
 

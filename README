@@ -1,32 +1,61 @@
 Ruby-VersionManager
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+The Ruby::VersionManager Module will provide a subset of the bash rvm.
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
-
+Ruby::VersionManager comes with a script rvm.pl. See the perldoc of rvm.pl for a list of actions and options.
 
 INSTALLATION
 
 To install this module, run the following commands:
 
-	perl Build.PL
-	./Build
-	./Build test
+	perl Build.PL --install
 	./Build install
 
 SUPPORT AND DOCUMENTATION
 
-After installing, you can find documentation for this module with the
+List available ruby versions.
+
+    rvm.pl list
+
+Update database of available ruby versions.
+
+    rvm.pl updatedb
+
+Install a ruby version. If no version is given the latest stable release will be installed.
+The program tries to guess the correct version from the provided string. It should at least match the major release.
+If you need to install a preview or rc version you will have to provide the full exact version.
+
+Latest ruby
+
+    rvm.pl install
+
+Latest ruby-1.8
+
+    rvm.pl install 1.8
+
+Install preview
+
+    rvm.pl install ruby-1.9.3-preview1
+
+To use the Ruby::VersionManager source ruby_vmanager.rc.
+
+    source ~/.ruby_vmanager/var/ruby_vmanager.rc
+
+
+Remove a ruby version and the source dir including the downloaded archive.
+You have to provide the full exact version of the ruby you want to remove as shown with list.
+
+    rvm.pl uninstall ruby-1.9.3-preview1
+
+If you uninstall your currently active ruby version you have to install/activate another version manually.
+
+
+After installing, you can also find documentation for this module with the
 perldoc command.
 
     perldoc Ruby::VersionManager
+    perldoc rvm.pl
+
 
 You can also look for information at:
 
