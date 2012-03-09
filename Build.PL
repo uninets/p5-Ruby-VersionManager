@@ -10,7 +10,8 @@ use Getopt::Long qw(:config pass_through);
 my $install = 0;
 my $dist    = 0;
 my $v = Ruby::VersionManager::Version->new;
-my @script_files = grep { -f and ! -d } glob 'script/*';
+my @script_files = grep { -f and ! -d } glob 'script/rvm.pl';
+say for @script_files;
 
 GetOptions(
     'install' => \$install,

@@ -8,37 +8,45 @@ use warnings;
 use Ruby::VersionManager;
 use Getopt::Long qw(:config pass_through);
 
-my @valid_actions = qw| list install updatedb uninstall |;
-
 my $action = shift;
 my $arg = shift;
 
-die "No action '$action'" unless grep { $_ eq $action } @valid_actions;
+die "No action defined." unless $action;
 
 my $rvm = Ruby::VersionManager->new();
 
-if ($action ~~ 'list'){
-    $rvm->list;
-    exit 0;
+my $dispatch_table = {
+    list => sub {
+        $rvm->list;
+        exit 0;
+    },
+    updatedb => sub {
+        $rvm->updatedb;
+        exit 0;
+    },
+    install => sub {
+        my $ruby_version = $arg || '1.9';
+        $rvm->ruby_version($ruby_version);
+        $rvm->install;
+    },
+    uninstall => sub {
+        my $ruby_version = $arg;
+        die "no version defined" unless $ruby_version;
+
+        $rvm->ruby_version($ruby_version);
+        $rvm->uninstall;
+    },
+    version => sub {
+        say Ruby::VersionManager::Version->get;
+        exit 0;
+    },
+};
+
+if (exists $dispatch_table->{$action}){
+    $dispatch_table->{$action}->();
 }
-
-if ($action ~~ 'updatedb'){
-    $rvm->updatedb;
-    exit 0;
-}
-
-if ($action ~~ 'install'){
-    my $ruby_version = $arg || '1.9';
-    $rvm->ruby_version($ruby_version);
-    $rvm->install;
-}
-
-if ($action ~~ 'uninstall'){
-    my $ruby_version = $arg;
-    die "no version defined" unless $ruby_version;
-
-    $rvm->ruby_version($ruby_version);
-    $rvm->uninstall;
+else {
+    say "No action $action defined";
 }
 
 __END__
@@ -53,7 +61,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003007
+Version 0.003008
 
 =head1 SYNOPSIS
 
@@ -63,6 +71,12 @@ rvm.pl will provide a subset of the bash rvm.
 
 It is recommended to use Ruby::VersionManager with local::lib to avoid interference with possibly installed system ruby.
 Ruby::VersionManager comes with a script rvm.pl with following options.
+
+=head2 version
+
+Show the version of Ruby::VersionManager.
+
+    rvm.pl version
 
 =head2 list
 
