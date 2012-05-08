@@ -16,4 +16,4 @@ plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
     if $@;
 
 all_pod_coverage_ok({ also_private => [ qr/^[A-Z_]+$/ ], },
-        "Ruby::VersionManager::BUILD, with all-caps functions as privates",);
+        "Ruby::VersionManager, with all-caps functions as privates",);

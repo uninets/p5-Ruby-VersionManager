@@ -9,7 +9,7 @@ use Ruby::VersionManager;
 use Getopt::Long qw(:config pass_through);
 
 my $action = shift;
-my $arg = shift;
+my $arg    = shift;
 
 die "No action defined." unless $action;
 
@@ -42,7 +42,7 @@ my $dispatch_table = {
     },
 };
 
-if (exists $dispatch_table->{$action}){
+if ( exists $dispatch_table->{$action} ) {
     $dispatch_table->{$action}->();
 }
 else {
@@ -61,7 +61,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003008
+Version 0.003009
 
 =head1 SYNOPSIS
 
