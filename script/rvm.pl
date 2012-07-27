@@ -8,8 +8,9 @@ use warnings;
 use Ruby::VersionManager;
 use Getopt::Long qw(:config pass_through);
 
-my $action = shift;
-my $arg    = shift;
+my $action  = shift;
+my $arg     = shift;
+my @options = @ARGV;
 
 die "No action defined." unless $action;
 
@@ -23,6 +24,9 @@ my $dispatch_table = {
     updatedb => sub {
         $rvm->updatedb;
         exit 0;
+    },
+    reinstall_gems => sub {
+        $rvm->gem('reinstall', @options);
     },
     install => sub {
         my $ruby_version = $arg || '1.9';
@@ -121,6 +125,15 @@ You have to provide the full exact version of the ruby you want to remove as sho
 
 If you uninstall your currently active ruby version you have to install/activate another version manually.
 
+=head2 reinstall_gems
+
+Reinstalls all gems listed in the given file. When no file is given at the command line the output of 'gem list' is used to determine which gems to reinstall.
+The file has to be in the same format as the output of 'gem list'.
+This action is not intended to repair any gem installation but to install identical gemsets on multiple machines. Missing dependencies will not be fixed.
+
+    rvm.pl reinstall_gems gem_list.txt # installs all gems in the list ignoring dependencies
+
+    rvm.pl reinstall_gems # reinstalls all installed gems
 =head1 LIMITATIONS AND TODO
 
 Currently Ruby::VersionManager is only running on Linux with bash installed.
