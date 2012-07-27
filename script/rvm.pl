@@ -134,6 +134,7 @@ This action is not intended to repair any gem installation but to install identi
     rvm.pl reinstall_gems gem_list.txt # installs all gems in the list ignoring dependencies
 
     rvm.pl reinstall_gems # reinstalls all installed gems
+
 =head1 LIMITATIONS AND TODO
 
 Currently Ruby::VersionManager is only running on Linux with bash installed.
