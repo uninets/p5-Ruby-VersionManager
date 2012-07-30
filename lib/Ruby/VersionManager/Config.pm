@@ -21,7 +21,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003011
+Version 0.003012
 
 =head1 SYNOPSIS
 

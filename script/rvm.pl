@@ -6,10 +6,7 @@ use feature 'say';
 use warnings;
 
 use Ruby::VersionManager;
-use Getopt::Long qw(:config pass_through);
-
 my $action  = shift;
-my $arg     = shift;
 my @options = @ARGV;
 
 die "No action defined." unless $action;
@@ -25,16 +22,16 @@ my $dispatch_table = {
         $rvm->updatedb;
         exit 0;
     },
-    reinstall_gems => sub {
-        $rvm->gem( 'reinstall', @options );
+    gem => sub {
+        $rvm->gem(@options);
     },
     install => sub {
-        my $ruby_version = $arg || '1.9';
+        my $ruby_version = shift @options || '1.9';
         $rvm->ruby_version($ruby_version);
         $rvm->install;
     },
     uninstall => sub {
-        my $ruby_version = $arg;
+        my $ruby_version = shift @options;
         die "no version defined" unless $ruby_version;
 
         $rvm->ruby_version($ruby_version);
@@ -65,7 +62,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003011
+Version 0.003012
 
 =head1 SYNOPSIS
 
@@ -125,15 +122,17 @@ You have to provide the full exact version of the ruby you want to remove as sho
 
 If you uninstall your currently active ruby version you have to install/activate another version manually.
 
-=head2 reinstall_gems
+=head2 gem
 
-Reinstalls all gems listed in the given file. When no file is given at the command line the output of 'gem list' is used to determine which gems to reinstall.
-The file has to be in the same format as the output of 'gem list'.
-This action is not intended to repair any gem installation but to install identical gemsets on multiple machines. Missing dependencies will not be fixed.
+Pass arguments to the gem command.
 
-    rvm.pl reinstall_gems gem_list.txt # installs all gems in the list ignoring dependencies
+    rvm.pl gem install unicorn # installs unicorn
 
-    rvm.pl reinstall_gems # reinstalls all installed gems
+Additionally you can use reinstall to reinstall your complete gemset. With a file containing the output of 'gem list' you can reproduce gemsets.
+
+    rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
+
+    rvm.pl gem reinstall # reinstalls all installed gems
 
 =head1 LIMITATIONS AND TODO
 

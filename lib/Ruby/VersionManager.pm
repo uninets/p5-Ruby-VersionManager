@@ -186,11 +186,11 @@ sub list {
 }
 
 sub gem {
-    my ( $self, @args ) = @_;
+    my ( $self, $action, @args ) = @_;
 
     my $dispatch = {
         reinstall => sub {
-            my $file    = $args[1];
+            my $file    = shift @args;
             my $gemlist = '';
 
             if ( !defined $file || !-f $file ) {
@@ -206,12 +206,15 @@ sub gem {
             }
 
             my $gems = $self->_parse_gemlist($gemlist);
-            $self->_reinstall_gems($gems);
+            $self->_install_gems( $gems, { nodeps => 1 } );
         },
     };
 
-    if ( exists $dispatch->{ $args[0] } ) {
-        $dispatch->{ $args[0] }->();
+    if ( exists $dispatch->{$action} ) {
+        $dispatch->{$action}->();
+    }
+    else {
+        system 'gem ' . join ' ', ( $action, @args );
     }
 
     return 1;
@@ -238,18 +241,18 @@ sub _parse_gemlist {
     return $gems;
 }
 
-sub _reinstall_gems {
-    my ( $self, $gems ) = @_;
+sub _install_gems {
+    my ( $self, $gems, $opts ) = @_;
 
-    say "Reinstalling all gems:";
     for my $gem ( keys %$gems ) {
         for my $version ( @{ $gems->{$gem} } ) {
             my $cmd = "gem install $gem ";
             $cmd .= "-v=$version";
-            $cmd .= " --ignore-dependencies";
+            if ( defined $opts && $opts->{'nodeps'} ) {
+                $cmd .= " --ignore-dependencies";
+            }
 
-            say "  Installing $gem version $version";
-            my $output = qx[$cmd];
+            system $cmd;
         }
     }
 
@@ -469,7 +472,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003011
+Version 0.003012
 
 =head1 SYNOPSIS
 
@@ -496,7 +499,7 @@ Name your gemset. More sophisticated support for gemsets needs to be implemented
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003011.
+Defaults to Ruby::VersionManager/0.003012.
 
 =head2 archive_type
 
