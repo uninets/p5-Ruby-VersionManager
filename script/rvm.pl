@@ -26,7 +26,7 @@ my $dispatch_table = {
         exit 0;
     },
     reinstall_gems => sub {
-        $rvm->gem('reinstall', @options);
+        $rvm->gem( 'reinstall', @options );
     },
     install => sub {
         my $ruby_version = $arg || '1.9';
@@ -65,7 +65,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003009
+Version 0.003011
 
 =head1 SYNOPSIS
 

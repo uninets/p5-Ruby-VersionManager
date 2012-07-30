@@ -186,34 +186,43 @@ sub list {
 }
 
 sub gem {
-    my ($self, @args) = @_;
+    my ( $self, @args ) = @_;
 
-    if ($args[0] eq 'reinstall'){
-        my $gemlist = '';
-        my $file = $args[1];
-        if (!defined $file || !-f $file){
-            $gemlist = qx[gem list];
-        }
-        else {
-            {
-                local $/;
-                open my $fh, '<', $file;
-                $gemlist = <$fh>;
-                close $fh;
+    my $dispatch = {
+        reinstall => sub {
+            my $file    = $args[1];
+            my $gemlist = '';
+
+            if ( !defined $file || !-f $file ) {
+                $gemlist = qx[gem list];
             }
-        }
+            else {
+                {
+                    local $/;
+                    open my $fh, '<', $file;
+                    $gemlist = <$fh>;
+                    close $fh;
+                }
+            }
 
-        my $gems = $self->_parse_gemlist($gemlist);
-        $self->_reinstall_gems($gems);
+            my $gems = $self->_parse_gemlist($gemlist);
+            $self->_reinstall_gems($gems);
+        },
+    };
+
+    if ( exists $dispatch->{ $args[0] } ) {
+        $dispatch->{ $args[0] }->();
     }
+
+    return 1;
 }
 
 sub _parse_gemlist {
-    my ($self, $gemlist) = @_;
+    my ( $self, $gemlist ) = @_;
 
     my $gems = {};
-    for my $line (split /\n/, $gemlist){
-        my ($gem, $versions) = $line =~ /
+    for my $line ( split /\n/, $gemlist ) {
+        my ( $gem, $versions ) = $line =~ /
             ([-_\w]+)\s # capture gem name
             [(](
                 (?:
@@ -230,11 +239,11 @@ sub _parse_gemlist {
 }
 
 sub _reinstall_gems {
-    my ($self, $gems) = @_;
+    my ( $self, $gems ) = @_;
 
     say "Reinstalling all gems:";
-    for my $gem (keys %$gems){
-        for my $version (@{$gems->{$gem}}){
+    for my $gem ( keys %$gems ) {
+        for my $version ( @{ $gems->{$gem} } ) {
             my $cmd = "gem install $gem ";
             $cmd .= "-v=$version";
             $cmd .= " --ignore-dependencies";
@@ -460,7 +469,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003009
+Version 0.003011
 
 =head1 SYNOPSIS
 
@@ -487,7 +496,7 @@ Name your gemset. More sophisticated support for gemsets needs to be implemented
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003009.
+Defaults to Ruby::VersionManager/0.003011.
 
 =head2 archive_type
 
