@@ -7,7 +7,7 @@ build_requires:
 configure_requires:
   Module::Build: 0.38
 dynamic_config: 1
-generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.112150'
+generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -19,13 +19,13 @@ no_index:
 provides:
   Ruby::VersionManager:
     file: lib/Ruby/VersionManager.pm
-    version: 0.003012
+    version: 0.003013
   Ruby::VersionManager::Config:
     file: lib/Ruby/VersionManager/Config.pm
-    version: 0.003012
+    version: 0.003013
   Ruby::VersionManager::Version:
     file: lib/Ruby/VersionManager/Version.pm
-    version: 0.003012
+    version: 0.003013
 requires:
   Cwd: 0
   File::Path: 0
@@ -33,7 +33,8 @@ requires:
   LWP::Simple: 0
   Moo: 0
   YAML: 0
+  autodie: 0
   perl: 5.01
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.003012
+version: 0.003013
