@@ -34,6 +34,7 @@ my $builder = Module::Build->new(
         'LWP'         => 0,
         'LWP::Simple' => 0,
         'File::Path'  => 0,
+        'autodie'     => 0,
     },
     add_to_cleanup     => ['Ruby-VersionManager-* Build _build MYMETA.*'],
     create_makefile_pl => 'traditional',

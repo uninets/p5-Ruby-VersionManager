@@ -472,7 +472,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003012
+Version 0.003013
 
 =head1 SYNOPSIS
 
@@ -499,7 +499,7 @@ Name your gemset. More sophisticated support for gemsets needs to be implemented
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003012.
+Defaults to Ruby::VersionManager/0.003013.
 
 =head2 archive_type
 
