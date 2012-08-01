@@ -15,6 +15,7 @@ use File::Path;
 use Cwd qw'abs_path cwd';
 
 use Ruby::VersionManager::Version;
+use Ruby::VersionManager::Gem;
 
 has rootdir          => ( is => 'rw' );
 has ruby_version     => ( is => 'rw' );
@@ -188,73 +189,8 @@ sub list {
 sub gem {
     my ( $self, $action, @args ) = @_;
 
-    my $dispatch = {
-        reinstall => sub {
-            my $file    = shift @args;
-            my $gemlist = '';
-
-            if ( !defined $file || !-f $file ) {
-                $gemlist = qx[gem list];
-            }
-            else {
-                {
-                    local $/;
-                    open my $fh, '<', $file;
-                    $gemlist = <$fh>;
-                    close $fh;
-                }
-            }
-
-            my $gems = $self->_parse_gemlist($gemlist);
-            $self->_install_gems( $gems, { nodeps => 1 } );
-        },
-    };
-
-    if ( exists $dispatch->{$action} ) {
-        $dispatch->{$action}->();
-    }
-    else {
-        system 'gem ' . join ' ', ( $action, @args );
-    }
-
-    return 1;
-}
-
-sub _parse_gemlist {
-    my ( $self, $gemlist ) = @_;
-
-    my $gems = {};
-    for my $line ( split /\n/, $gemlist ) {
-        my ( $gem, $versions ) = $line =~ /
-            ([-_\w]+)\s # capture gem name
-            [(](
-                (?:
-                    (?:
-                        (?:\d+\.)*\d+
-                    )
-                    ,?\s?
-                )+
-            )[)]/mxg;
-        $gems->{$gem} = [ split ', ', $versions ] if defined $gem;
-    }
-
-    return $gems;
-}
-
-sub _install_gems {
-    my ( $self, $gems, $opts ) = @_;
-
-    for my $gem ( keys %$gems ) {
-        for my $version ( @{ $gems->{$gem} } ) {
-            my $cmd = "gem install $gem ";
-            $cmd .= "-v=$version";
-            if ( defined $opts && $opts->{'nodeps'} ) {
-                $cmd .= " --ignore-dependencies";
-            }
-
-            system $cmd;
-        }
-    }
+    my $gem = Ruby::VersionManager::Gem->new;
+    $gem->run_action($action, @args);
 
     return 1;
 }
