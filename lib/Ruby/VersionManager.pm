@@ -472,7 +472,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003013
+Version 0.003014
 
 =head1 SYNOPSIS
 
@@ -496,10 +496,20 @@ Preview and RC versions will never be installed automatically. You have to provi
 
 Name your gemset. More sophisticated support for gemsets needs to be implemented.
 
+=head2 gem
+
+Pass arguments to the 'gem' command.
+Additionally you can resemble gemsets from other users or machines by using reinstall with a file containing the output of 'gem list'. When omiting the file name the currently installed gemset will be completely reinstalled without pulling in any additional dependencies.
+
+    $rvm->gem('reinstall', [$filename]); # install all gems given in the file
+    $rvm->gem('reinstall');              # reinstall all gems from the currently used gemset
+
+    $rvm->gem('install', ['unicorn']);   # install unicorn. Same as 'gem install unicorn' on the command line
+
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003013.
+Defaults to Ruby::VersionManager/0.003014.
 
 =head2 archive_type
 

@@ -3,7 +3,7 @@ package Ruby::VersionManager::Config;
 use 5.010;
 use feature 'say';
 use warnings;
-use autodie;
+use strict;
 
 # placeholder
 
@@ -21,7 +21,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003013
+Version 0.003014
 
 =head1 SYNOPSIS
 
