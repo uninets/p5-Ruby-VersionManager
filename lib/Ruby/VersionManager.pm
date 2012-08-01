@@ -434,13 +434,13 @@ Name your gemset. More sophisticated support for gemsets needs to be implemented
 
 =head2 gem
 
-Pass arguments to the 'gem' command.
+Uses Ruby::VersionManager::Gem to pass arguments to the 'gem' command.
 Additionally you can resemble gemsets from other users or machines by using reinstall with a file containing the output of 'gem list'. When omiting the file name the currently installed gemset will be completely reinstalled without pulling in any additional dependencies.
 
-    $rvm->gem('reinstall', [$filename]); # install all gems given in the file
+    $rvm->gem('reinstall', ($filename)); # install all gems given in the file
     $rvm->gem('reinstall');              # reinstall all gems from the currently used gemset
 
-    $rvm->gem('install', ['unicorn']);   # install unicorn. Same as 'gem install unicorn' on the command line
+    $rvm->gem('install', ('unicorn', '-v=4.0.1));   # install unicorn. Same as 'gem install unicorn -v=4.0.1' on the command line
 
 =head2 agent_string
 
