@@ -8,77 +8,118 @@ INSTALLATION
 
 To install this module, run the following commands:
 
-	perl Build.PL --install
-	./Build install
+    git clone git://github.com/mueller-wulff/p5-Ruby-VersionManager.git
+    cd p5-Ruby-VersionManager
+    perl Build.PL
+    ./Build installdeps
+    ./Build install
 
 SUPPORT AND DOCUMENTATION
 
-List available ruby versions.
-
-    rvm.pl list
-
-Update database of available ruby versions.
-
-    rvm.pl updatedb
-
-Install a ruby version. If no version is given the latest stable release will be installed.
-The program tries to guess the correct version from the provided string. It should at least match the major release.
-If you need to install a preview or rc version you will have to provide the full exact version.
-
-Latest ruby
-
-    rvm.pl install
-
-Latest ruby-1.8
-
-    rvm.pl install 1.8
-
-Install preview
-
-    rvm.pl install ruby-1.9.3-preview1
-
-To use the Ruby::VersionManager source ruby_vmanager.rc.
-
-    source ~/.ruby_vmanager/var/ruby_vmanager.rc
-
-
-Remove a ruby version and the source dir including the downloaded archive.
-You have to provide the full exact version of the ruby you want to remove as shown with list.
-
-    rvm.pl uninstall ruby-1.9.3-preview1
-
-If you uninstall your currently active ruby version you have to install/activate another version manually.
-
-
-After installing, you can also find documentation for this module with the
-perldoc command.
+The documentation is available via perldoc:
 
     perldoc Ruby::VersionManager
     perldoc rvm.pl
 
+NAME
+    rvm.pl
 
-You can also look for information at:
+WARNING!
+    This is an unstable development release not ready for production!
 
-    RT, CPAN's request tracker (report bugs here)
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Ruby-VersionManager
+VERSION
+    Version 0.003015
 
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Ruby-VersionManager
+SYNOPSIS
+    rvm.pl will provide a subset of the bash rvm.
 
-    CPAN Ratings
-        http://cpanratings.perl.org/d/Ruby-VersionManager
+INSTALL RUBY
+    It is recommended to use Ruby::VersionManager with local::lib to avoid
+    interference with possibly installed system ruby. Ruby::VersionManager
+    comes with a script rvm.pl with following options.
 
-    Search CPAN
-        http://search.cpan.org/dist/Ruby-VersionManager/
+  version
+    Show the version of Ruby::VersionManager.
 
+        rvm.pl version
 
-LICENSE AND COPYRIGHT
+  list
+    List available ruby versions.
 
-Copyright (C) 2012 mugen Kenichi
+        rvm.pl list
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+  updatedb
+    Update database of available ruby versions.
 
-See http://dev.perl.org/licenses/ for more information.
+        rvm.pl updatedb
+
+  install
+    Install a ruby version. If no version is given the latest stable release
+    will be installed. The program tries to guess the correct version from
+    the provided string. It should at least match the major release. If you
+    need to install a preview or rc version you will have to provide the
+    full exact version.
+
+    Latest ruby
+
+        rvm.pl install
+
+    Latest ruby-1.8
+
+        rvm.pl install 1.8
+
+    Install preview
+
+        rvm.pl install ruby-1.9.3-preview1
+
+    To use the Ruby::VersionManager source ruby_vmanager.rc.
+
+        source ~/.ruby_vmanager/var/ruby_vmanager.rc
+
+  uninstall
+    Remove a ruby version and the source dir including the downloaded
+    archive. You have to provide the full exact version of the ruby you want
+    to remove as shown with list.
+
+        rvm.pl uninstall ruby-1.9.3-preview1
+
+    If you uninstall your currently active ruby version you have to
+    install/activate another version manually.
+
+  gem
+    Pass arguments to the gem command.
+
+        rvm.pl gem install unicorn # installs unicorn
+
+    Additionally you can use reinstall to reinstall your complete gemset.
+    With a file containing the output of 'gem list' you can reproduce
+    gemsets.
+
+        rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
+
+        rvm.pl gem reinstall # reinstalls all installed gems
+
+LIMITATIONS AND TODO
+    Currently Ruby::VersionManager is only running on Linux with bash
+    installed. Better support of gemsets needs to be added.
+
+AUTHOR
+    Mugen Kenichi, "<mugen.kenichi at uninets.eu>"
+
+BUGS
+    Report bugs at:
+
+    * Ruby::VersionManager issue tracker
+
+      <https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+
+    * support at uninets.eu
+
+      "<mugen.kenichi at uninets.eu>"
+
+SUPPORT
+    * Technical support
+
+      "<mugen.kenichi at uninets.eu>"
+
 
