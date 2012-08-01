@@ -59,6 +59,10 @@ my $builder = Module::Build->new(
                 file    => 'lib/Ruby/VersionManager/Version.pm',
                 version => $v->get,
             },
+            'Ruby::VersionManager::Gem' => {
+                file    => 'lib/Ruby/VersionManager/Gem.pm',
+                version => $v->get,
+            },
         },
     },
 
