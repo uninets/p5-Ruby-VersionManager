@@ -1,6 +1,7 @@
 use 5.010;
 use feature 'say';
 use warnings;
+use strict;
 
 use lib 'lib';
 use Ruby::VersionManager::Version;

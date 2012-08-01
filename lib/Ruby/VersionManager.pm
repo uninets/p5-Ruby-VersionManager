@@ -190,7 +190,7 @@ sub gem {
     my ( $self, $action, @args ) = @_;
 
     my $gem = Ruby::VersionManager::Gem->new;
-    $gem->run_action($action, @args);
+    $gem->run_action( $action, @args );
 
     return 1;
 }
@@ -408,7 +408,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003014
+Version 0.003015
 
 =head1 SYNOPSIS
 
@@ -445,7 +445,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003014.
+Defaults to Ruby::VersionManager/0.003015.
 
 =head2 archive_type
 
