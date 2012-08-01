@@ -15,6 +15,7 @@ use File::Path;
 use Cwd qw'abs_path cwd';
 
 use Ruby::VersionManager::Version;
+use Ruby::VersionManager::Gem;
 
 has rootdir          => ( is => 'rw' );
 has ruby_version     => ( is => 'rw' );
@@ -188,73 +189,8 @@ sub list {
 sub gem {
     my ( $self, $action, @args ) = @_;
 
-    my $dispatch = {
-        reinstall => sub {
-            my $file    = shift @args;
-            my $gemlist = '';
-
-            if ( !defined $file || !-f $file ) {
-                $gemlist = qx[gem list];
-            }
-            else {
-                {
-                    local $/;
-                    open my $fh, '<', $file;
-                    $gemlist = <$fh>;
-                    close $fh;
-                }
-            }
-
-            my $gems = $self->_parse_gemlist($gemlist);
-            $self->_install_gems( $gems, { nodeps => 1 } );
-        },
-    };
-
-    if ( exists $dispatch->{$action} ) {
-        $dispatch->{$action}->();
-    }
-    else {
-        system 'gem ' . join ' ', ( $action, @args );
-    }
-
-    return 1;
-}
-
-sub _parse_gemlist {
-    my ( $self, $gemlist ) = @_;
-
-    my $gems = {};
-    for my $line ( split /\n/, $gemlist ) {
-        my ( $gem, $versions ) = $line =~ /
-            ([-_\w]+)\s # capture gem name
-            [(](
-                (?:
-                    (?:
-                        (?:\d+\.)*\d+
-                    )
-                    ,?\s?
-                )+
-            )[)]/mxg;
-        $gems->{$gem} = [ split ', ', $versions ] if defined $gem;
-    }
-
-    return $gems;
-}
-
-sub _install_gems {
-    my ( $self, $gems, $opts ) = @_;
-
-    for my $gem ( keys %$gems ) {
-        for my $version ( @{ $gems->{$gem} } ) {
-            my $cmd = "gem install $gem ";
-            $cmd .= "-v=$version";
-            if ( defined $opts && $opts->{'nodeps'} ) {
-                $cmd .= " --ignore-dependencies";
-            }
-
-            system $cmd;
-        }
-    }
+    my $gem = Ruby::VersionManager::Gem->new;
+    $gem->run_action( $action, @args );
 
     return 1;
 }
@@ -472,7 +408,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003014
+Version 0.003015
 
 =head1 SYNOPSIS
 
@@ -498,18 +434,18 @@ Name your gemset. More sophisticated support for gemsets needs to be implemented
 
 =head2 gem
 
-Pass arguments to the 'gem' command.
+Uses Ruby::VersionManager::Gem to pass arguments to the 'gem' command.
 Additionally you can resemble gemsets from other users or machines by using reinstall with a file containing the output of 'gem list'. When omiting the file name the currently installed gemset will be completely reinstalled without pulling in any additional dependencies.
 
-    $rvm->gem('reinstall', [$filename]); # install all gems given in the file
+    $rvm->gem('reinstall', ($filename)); # install all gems given in the file
     $rvm->gem('reinstall');              # reinstall all gems from the currently used gemset
 
-    $rvm->gem('install', ['unicorn']);   # install unicorn. Same as 'gem install unicorn' on the command line
+    $rvm->gem('install', ('unicorn', '-v=4.0.1));   # install unicorn. Same as 'gem install unicorn -v=4.0.1' on the command line
 
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003014.
+Defaults to Ruby::VersionManager/0.003015.
 
 =head2 archive_type
 

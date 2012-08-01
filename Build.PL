@@ -1,6 +1,7 @@
 use 5.010;
 use feature 'say';
 use warnings;
+use strict;
 
 use lib 'lib';
 use Ruby::VersionManager::Version;
@@ -57,6 +58,10 @@ my $builder = Module::Build->new(
             },
             'Ruby::VersionManager::Version' => {
                 file    => 'lib/Ruby/VersionManager/Version.pm',
+                version => $v->get,
+            },
+            'Ruby::VersionManager::Gem' => {
+                file    => 'lib/Ruby/VersionManager/Gem.pm',
                 version => $v->get,
             },
         },
