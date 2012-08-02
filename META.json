@@ -45,19 +45,19 @@
    "provides" : {
       "Ruby::VersionManager" : {
          "file" : "lib/Ruby/VersionManager.pm",
-         "version" : "0.003015"
+         "version" : "0.003016"
       },
       "Ruby::VersionManager::Config" : {
          "file" : "lib/Ruby/VersionManager/Config.pm",
-         "version" : "0.003015"
+         "version" : "0.003016"
       },
       "Ruby::VersionManager::Gem" : {
          "file" : "lib/Ruby/VersionManager/Gem.pm",
-         "version" : "0.003015"
+         "version" : "0.003016"
       },
       "Ruby::VersionManager::Version" : {
          "file" : "lib/Ruby/VersionManager/Version.pm",
-         "version" : "0.003015"
+         "version" : "0.003016"
       }
    },
    "release_status" : "stable",
@@ -66,5 +66,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.003015"
+   "version" : "0.003016"
 }
