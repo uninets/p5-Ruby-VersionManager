@@ -324,7 +324,7 @@ sub _make_install {
 
     chdir $self->rootdir . '/source/' . $self->ruby_version;
 
-    system "./configure --enable-pthread --enable-shared --prefix=$prefix && make && make install";
+    system "./configure --with-ssl --with-yaml --enable-ipv6 --enable-pthread --enable-shared --prefix=$prefix && make && make install";
 
     chdir $cwd;
 
