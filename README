@@ -1,26 +1,3 @@
-Ruby-VersionManager
-
-The Ruby::VersionManager Module will provide a subset of the bash rvm.
-
-Ruby::VersionManager comes with a script rvm.pl. See the perldoc of rvm.pl for a list of actions and options.
-
-INSTALLATION
-
-To install this module, run the following commands:
-
-    git clone git://github.com/mueller-wulff/p5-Ruby-VersionManager.git
-    cd p5-Ruby-VersionManager
-    perl Build.PL
-    ./Build installdeps
-    ./Build install
-
-SUPPORT AND DOCUMENTATION
-
-The documentation is available via perldoc:
-
-    perldoc Ruby::VersionManager
-    perldoc rvm.pl
-
 NAME
     rvm.pl
 
@@ -28,7 +5,7 @@ WARNING!
     This is an unstable development release not ready for production!
 
 VERSION
-    Version 0.003015
+    Version 0.003018
 
 SYNOPSIS
     rvm.pl will provide a subset of the bash rvm.
@@ -121,5 +98,4 @@ SUPPORT
     * Technical support
 
       "<mugen.kenichi at uninets.eu>"
-
 

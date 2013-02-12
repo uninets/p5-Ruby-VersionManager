@@ -374,6 +374,12 @@ sub _fetch_ruby {
 sub _install_rubygems {
     my ($self) = @_;
 
+    if ( -d $self->rootdir . '/source/' . $self->ruby_version . '/bin/' ) {
+        my $source_bin_dir = $self->rootdir . '/source/' . $self->ruby_version . '/bin/';
+        my $ruby_bin_dir   = $ENV{MY_RUBY_HOME} . '/bin/';
+        system "cp $source_bin_dir/* $ruby_bin_dir";
+    }
+
     unless ( -f $ENV{MY_RUBY_HOME} . '/bin/gem' ) {
         my $url  = 'http://rubyforge.org/frs/download.php/70696/rubygems-1.3.7.tgz';
         my $file = $self->rootdir . '/source/rubygems-1.3.7.tgz';
@@ -408,7 +414,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003017
+Version 0.003018
 
 =head1 SYNOPSIS
 
@@ -445,7 +451,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003017.
+Defaults to Ruby::VersionManager/0.003018.
 
 =head2 archive_type
 

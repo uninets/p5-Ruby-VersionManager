@@ -1,97 +1,43 @@
-#!/usr/bin/perl
-
-use 5.010;
-use strict;
-use feature 'say';
-use warnings;
-
-use Ruby::VersionManager;
-my $action  = shift;
-my @options = @ARGV;
-
-die "No action defined." unless $action;
-
-my $rvm = Ruby::VersionManager->new();
-
-my $dispatch_table = {
-    list => sub {
-        $rvm->list;
-        exit 0;
-    },
-    updatedb => sub {
-        $rvm->updatedb;
-        exit 0;
-    },
-    gem => sub {
-        $rvm->gem(@options);
-    },
-    install => sub {
-        my $ruby_version = shift @options || '1.9';
-        $rvm->ruby_version($ruby_version);
-        $rvm->install;
-    },
-    uninstall => sub {
-        my $ruby_version = shift @options;
-        die "no version defined" unless $ruby_version;
-
-        $rvm->ruby_version($ruby_version);
-        $rvm->uninstall;
-    },
-    version => sub {
-        say Ruby::VersionManager::Version->get;
-        exit 0;
-    },
-};
-
-if ( exists $dispatch_table->{$action} ) {
-    $dispatch_table->{$action}->();
-}
-else {
-    say "No action $action defined";
-}
-
-__END__
-
-=head1 NAME
+# NAME
 
 rvm.pl
 
-=head1 WARNING!
+# WARNING!
 
 This is an unstable development release not ready for production!
 
-=head1 VERSION
+# VERSION
 
 Version 0.003018
 
-=head1 SYNOPSIS
+# SYNOPSIS
 
 rvm.pl will provide a subset of the bash rvm.
 
-=head1 INSTALL RUBY
+# INSTALL RUBY
 
 It is recommended to use Ruby::VersionManager with local::lib to avoid interference with possibly installed system ruby.
 Ruby::VersionManager comes with a script rvm.pl with following options.
 
-=head2 version
+## version
 
 Show the version of Ruby::VersionManager.
 
     rvm.pl version
 
-=head2 list
+## list
 
 List available ruby versions.
 
     rvm.pl list
 
-=head2 updatedb
+## updatedb
 
 Update database of available ruby versions.
 
     rvm.pl updatedb
 
-=head2 install
+## install
 
 Install a ruby version. If no version is given the latest stable release will be installed.
 The program tries to guess the correct version from the provided string. It should at least match the major release.
@@ -109,11 +55,11 @@ Install preview
 
     rvm.pl install ruby-1.9.3-preview1
 
-To use the Ruby::VersionManager source ruby_vmanager.rc.
+To use the Ruby::VersionManager source ruby\_vmanager.rc.
 
     source ~/.ruby_vmanager/var/ruby_vmanager.rc
 
-=head2 uninstall
+## uninstall
 
 Remove a ruby version and the source dir including the downloaded archive.
 You have to provide the full exact version of the ruby you want to remove as shown with list.
@@ -122,7 +68,7 @@ You have to provide the full exact version of the ruby you want to remove as sho
 
 If you uninstall your currently active ruby version you have to install/activate another version manually.
 
-=head2 gem
+## gem
 
 Pass arguments to the gem command.
 
@@ -134,40 +80,29 @@ Additionally you can use reinstall to reinstall your complete gemset. With a fil
 
     rvm.pl gem reinstall # reinstalls all installed gems
 
-=head1 LIMITATIONS AND TODO
+# LIMITATIONS AND TODO
 
 Currently Ruby::VersionManager is only running on Linux with bash installed.
 Better support of gemsets needs to be added.
 
-=head1 AUTHOR
+# AUTHOR
 
-Mugen Kenichi, C<< <mugen.kenichi at uninets.eu> >>
+Mugen Kenichi, `<mugen.kenichi at uninets.eu>`
 
-=head1 BUGS
+# BUGS
 
 Report bugs at:
 
-=over 2
+- Ruby::VersionManager issue tracker
 
-=item * Ruby::VersionManager issue tracker
+    [https://github.com/mugenken/p5-Ruby-VersionManager/issues](https://github.com/mugenken/p5-Ruby-VersionManager/issues)
 
-L<https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+- support at uninets.eu
 
-=item * support at uninets.eu
+    `<mugen.kenichi at uninets.eu>`
 
-C<< <mugen.kenichi at uninets.eu> >>
+# SUPPORT
 
-=back
+- Technical support
 
-=head1 SUPPORT
-
-=over 2
-
-=item * Technical support
-
-C<< <mugen.kenichi at uninets.eu> >>
-
-=back
-
-=cut
-
+    `<mugen.kenichi at uninets.eu>`
