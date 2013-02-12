@@ -408,7 +408,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003016
+Version 0.003017
 
 =head1 SYNOPSIS
 
@@ -445,7 +445,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003016.
+Defaults to Ruby::VersionManager/0.003017.
 
 =head2 archive_type
 

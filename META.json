@@ -4,7 +4,7 @@
       "mugen Kenichi <mugen.kenichi@uninets.eu>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.112150",
    "license" : [
       "perl_5"
    ],
@@ -21,7 +21,7 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "Test::More" : "0"
+            "Test::More" : 0
          }
       },
       "configure" : {
@@ -31,13 +31,13 @@
       },
       "runtime" : {
          "requires" : {
-            "Cwd" : "0",
-            "File::Path" : "0",
-            "LWP" : "0",
-            "LWP::Simple" : "0",
-            "Moo" : "0",
-            "YAML" : "0",
-            "autodie" : "0",
+            "Cwd" : 0,
+            "File::Path" : 0,
+            "LWP" : 0,
+            "LWP::Simple" : 0,
+            "Moo" : 0,
+            "YAML" : 0,
+            "autodie" : 0,
             "perl" : "5.01"
          }
       }
@@ -45,19 +45,19 @@
    "provides" : {
       "Ruby::VersionManager" : {
          "file" : "lib/Ruby/VersionManager.pm",
-         "version" : "0.003016"
+         "version" : "0.003017"
       },
       "Ruby::VersionManager::Config" : {
          "file" : "lib/Ruby/VersionManager/Config.pm",
-         "version" : "0.003016"
+         "version" : "0.003017"
       },
       "Ruby::VersionManager::Gem" : {
          "file" : "lib/Ruby/VersionManager/Gem.pm",
-         "version" : "0.003016"
+         "version" : "0.003017"
       },
       "Ruby::VersionManager::Version" : {
          "file" : "lib/Ruby/VersionManager/Version.pm",
-         "version" : "0.003016"
+         "version" : "0.003017"
       }
    },
    "release_status" : "stable",
@@ -66,5 +66,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.003016"
+   "version" : "0.003017"
 }
