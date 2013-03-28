@@ -1,6 +1,6 @@
 # NAME
 
-rvm.pl
+Ruby::VersionManager
 
 # WARNING!
 
@@ -8,34 +8,95 @@ This is an unstable development release not ready for production!
 
 # VERSION
 
-Version 0.003018
+Version 0.003019
 
 # SYNOPSIS
 
-rvm.pl will provide a subset of the bash rvm.
+The Ruby::VersionManager Module will provide a subset of the bash rvm.
 
-# INSTALL RUBY
+Ruby::VersionManager comes with a script rvm.pl. See the perldoc of rvm.pl for a list of actions and options.
 
-It is recommended to use Ruby::VersionManager with local::lib to avoid interference with possibly installed system ruby.
-Ruby::VersionManager comes with a script rvm.pl with following options.
+# ATTRIBUTES
 
-## version
+## rootdir
 
-Show the version of Ruby::VersionManager.
+Root directory for Ruby::VersionManager file structure.
 
-    rvm.pl version
+## ruby\_version
+
+The ruby version to install, check or remove.
+Any String matching one of the major ruby versions is valid. Ruby::VersionManager will guess a version based on available versions matching the string. If multiple versions match the latest stable release will be used.
+Preview and RC versions will never be installed automatically. You have to provide the full matching version string as shown with the list method.
+
+## gemset
+
+Name your gemset. More sophisticated support for gemsets needs to be implemented.
+
+## gem
+
+Uses Ruby::VersionManager::Gem to pass arguments to the 'gem' command.
+Additionally you can resemble gemsets from other users or machines by using reinstall with a file containing the output of 'gem list'. When omiting the file name the currently installed gemset will be completely reinstalled without pulling in any additional dependencies.
+
+    $rvm->gem('reinstall', ($filename)); # install all gems given in the file
+    $rvm->gem('reinstall');              # reinstall all gems from the currently used gemset
+
+    $rvm->gem('install', ('unicorn', '-v=4.0.1));   # install unicorn. Same as 'gem install unicorn -v=4.0.1' on the command line
+
+## agent\_string
+
+The user agent used when downloading ruby.
+Defaults to Ruby::VersionManager/0.003019.
+
+## archive\_type
+
+Type of the ruby archive to download.
+Defaults to .tar.bz2, valid are also .tar.gz and .zip.
+
+## major\_version
+
+Will be automatically set.
+
+## rubygems\_version
+
+Not yet in use.
+
+# CONSTRUCTION
+
+All attributes are optional at creation. Note that rootdir should be set at construction if you want another directory than default because Ruby::VersionManager->new will bootstrap the needed directories.
+
+    my $rvm = Ruby:VersionManager->new;
+
+Or
+
+    my $rvm = Ruby:VersionManager->new(
+        rootdir => '/path/to/root',
+        ruby_version => '1.8',
+        gemset => 'name_of_the_set',
+    );
+
+
+
+# METHODS
+
+## available\_rubies
+
+Returns a hashref of the available ruby versions.
+
+## installed\_rubies
+
+Returns a hashref of the installed ruby versions.
 
 ## list
 
-List available ruby versions.
+Print a list of available and installed ruby versions to STDOUT.
 
-    rvm.pl list
+    $rvm->list;
 
 ## updatedb
 
 Update database of available ruby versions.
 
-    rvm.pl updatedb
+    $rvm->updatedb;
 
 ## install
 
@@ -45,44 +106,36 @@ If you need to install a preview or rc version you will have to provide the full
 
 Latest ruby
 
-    rvm.pl install
+    $rvm->ruby_version('1.9');
+    $rvm->install;
 
 Latest ruby-1.8
 
-    rvm.pl install 1.8
+    $rvm->ruby_version('1.8');
+    $rvm->install;
 
 Install preview
 
-    rvm.pl install ruby-1.9.3-preview1
-
-To use the Ruby::VersionManager source ruby\_vmanager.rc.
-
-    source ~/.ruby_vmanager/var/ruby_vmanager.rc
+    $rvm->ruby_version('ruby-1.9.3-preview1');
+    $rvm->install;
 
 ## uninstall
 
 Remove a ruby version and the source dir including the downloaded archive.
 You have to provide the full exact version of the ruby you want to remove as shown with list.
 
-    rvm.pl uninstall ruby-1.9.3-preview1
+    $rvm->ruby_version('ruby-1.9.3-preview1');
+    $rvm->uninstall;
 
-If you uninstall your currently active ruby version you have to install/activate another version manually.
+## switch\_gemset
 
-## gem
+Update the environment to use another gem set for the corrently active ruby.
 
-Pass arguments to the gem command.
-
-    rvm.pl gem install unicorn # installs unicorn
-
-Additionally you can use reinstall to reinstall your complete gemset. With a file containing the output of 'gem list' you can reproduce gemsets.
-
-    rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
-
-    rvm.pl gem reinstall # reinstalls all installed gems
+    $rvm->switch_gemset('another_set')
 
 # LIMITATIONS AND TODO
 
-Currently Ruby::VersionManager is only running on Linux with bash installed.
+Currently Ruby::VersionManager is only tested to be running on Linux with bash installed.
 Better support of gemsets needs to be added.
 
 # AUTHOR

@@ -25,6 +25,9 @@ my $dispatch_table = {
     gem => sub {
         $rvm->gem(@options);
     },
+    gemset => sub {
+        die "No ruby version installed or current version not maintained by rvm.pl" unless $rvm->switch_gemset(@options);
+    },
     install => sub {
         my $ruby_version = shift @options || '1.9';
         $rvm->ruby_version($ruby_version);
@@ -62,7 +65,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003018
+Version 0.003019
 
 =head1 SYNOPSIS
 
@@ -133,6 +136,12 @@ Additionally you can use reinstall to reinstall your complete gemset. With a fil
     rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
 
     rvm.pl gem reinstall # reinstalls all installed gems
+
+=head2 gemset
+
+Switch to another set of gems.
+
+    rvm.pl gemset my_set
 
 =head1 LIMITATIONS AND TODO
 

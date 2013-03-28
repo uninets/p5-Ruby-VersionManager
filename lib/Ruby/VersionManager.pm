@@ -39,7 +39,6 @@ sub BUILD {
     $self->_check_db  or die;
     $self->_check_installed;
     $self->gemset('default') unless $self->gemset;
-
 }
 
 sub _make_base {
@@ -193,6 +192,28 @@ sub gem {
     $gem->run_action( $action, @args );
 
     return 1;
+}
+
+sub switch_gemset {
+    my ($self, $gemset) = @_;
+
+    if ($ENV{RUBY_VERSION} && $gemset){
+        $self->ruby_version($ENV{RUBY_VERSION});
+        ( my $major_version = $self->ruby_version ) =~ s/ruby-(\d\.\d).*/$1/;
+        $self->major_version($major_version);
+        $self->_check_installed;
+
+        my $installed = $self->installed_rubies->{$major_version};
+
+        if ($self->ruby_version ~~ @$installed){
+            $self->gemset($gemset);
+            $self->_setup_environment;
+
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 sub _sort_rubies {
@@ -414,7 +435,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003018
+Version 0.003019
 
 =head1 SYNOPSIS
 
@@ -451,7 +472,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003018.
+Defaults to Ruby::VersionManager/0.003019.
 
 =head2 archive_type
 
@@ -531,6 +552,12 @@ You have to provide the full exact version of the ruby you want to remove as sho
 
     $rvm->ruby_version('ruby-1.9.3-preview1');
     $rvm->uninstall;
+
+=head2 switch_gemset
+
+Update the environment to use another gem set for the corrently active ruby.
+
+    $rvm->switch_gemset('another_set')
 
 =head1 LIMITATIONS AND TODO
 
