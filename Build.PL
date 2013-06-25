@@ -23,7 +23,7 @@ my $builder = Module::Build->new(
     module_name        => 'Ruby::VersionManager',
     license            => 'perl',
     dist_abstract      => 'Manage ruby versions',
-    dist_author        => q{mugen Kenichi <mugen.kenichi@uninets.eu>},
+    dist_author        => q{Matthias Krull <m.krull@uninets.eu>},
     dist_version_from  => 'lib/Ruby/VersionManager/Version.pm',
     build_requires     => { 'Test::More' => 0, },
     configure_requires => { 'Module::Build' => 0.38, },

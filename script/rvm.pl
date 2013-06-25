@@ -14,43 +14,47 @@ die "No action defined." unless $action;
 my $rvm = Ruby::VersionManager->new();
 
 my $dispatch_table = {
-    list => sub {
-        $rvm->list;
-        exit 0;
-    },
-    updatedb => sub {
-        $rvm->updatedb;
-        exit 0;
-    },
-    gem => sub {
-        $rvm->gem(@options);
-    },
-    gemset => sub {
-        die "No ruby version installed or current version not maintained by rvm.pl" unless $rvm->switch_gemset(@options);
-    },
-    install => sub {
-        my $ruby_version = shift @options || '1.9';
-        $rvm->ruby_version($ruby_version);
-        $rvm->install;
-    },
-    uninstall => sub {
-        my $ruby_version = shift @options;
-        die "no version defined" unless $ruby_version;
+	list => sub {
+		$rvm->list;
+		exit 0;
+	},
+	updatedb => sub {
+		$rvm->updatedb;
+		exit 0;
+	},
+	gem => sub {
+		$rvm->gem(@options);
+	},
+	gemset => sub {
+		die "No ruby version installed or current version not maintained by rvm.pl" unless $rvm->switch_gemset(@options);
+	},
+	gemsets => sub {
+		say for $rvm->gemsets;
+		exit 0;
+	},
+	install => sub {
+		my $ruby_version = shift @options || '1.9';
+		$rvm->ruby_version($ruby_version);
+		$rvm->install;
+	},
+	uninstall => sub {
+		my $ruby_version = shift @options;
+		die "no version defined" unless $ruby_version;
 
-        $rvm->ruby_version($ruby_version);
-        $rvm->uninstall;
-    },
-    version => sub {
-        say Ruby::VersionManager::Version->get;
-        exit 0;
-    },
+		$rvm->ruby_version($ruby_version);
+		$rvm->uninstall;
+	},
+	version => sub {
+		say Ruby::VersionManager::Version->get;
+		exit 0;
+	},
 };
 
 if ( exists $dispatch_table->{$action} ) {
-    $dispatch_table->{$action}->();
+	$dispatch_table->{$action}->();
 }
 else {
-    say "No action $action defined";
+	say "No action $action defined";
 }
 
 __END__
@@ -65,7 +69,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003019
+Version 0.003020
 
 =head1 SYNOPSIS
 
@@ -80,19 +84,19 @@ Ruby::VersionManager comes with a script rvm.pl with following options.
 
 Show the version of Ruby::VersionManager.
 
-    rvm.pl version
+	rvm.pl version
 
 =head2 list
 
 List available ruby versions.
 
-    rvm.pl list
+	rvm.pl list
 
 =head2 updatedb
 
 Update database of available ruby versions.
 
-    rvm.pl updatedb
+	rvm.pl updatedb
 
 =head2 install
 
@@ -102,26 +106,26 @@ If you need to install a preview or rc version you will have to provide the full
 
 Latest ruby
 
-    rvm.pl install
+	rvm.pl install
 
 Latest ruby-1.8
 
-    rvm.pl install 1.8
+	rvm.pl install 1.8
 
 Install preview
 
-    rvm.pl install ruby-1.9.3-preview1
+	rvm.pl install ruby-1.9.3-preview1
 
 To use the Ruby::VersionManager source ruby_vmanager.rc.
 
-    source ~/.ruby_vmanager/var/ruby_vmanager.rc
+	source ~/.ruby_vmanager/var/ruby_vmanager.rc
 
 =head2 uninstall
 
 Remove a ruby version and the source dir including the downloaded archive.
 You have to provide the full exact version of the ruby you want to remove as shown with list.
 
-    rvm.pl uninstall ruby-1.9.3-preview1
+	rvm.pl uninstall ruby-1.9.3-preview1
 
 If you uninstall your currently active ruby version you have to install/activate another version manually.
 
@@ -129,19 +133,25 @@ If you uninstall your currently active ruby version you have to install/activate
 
 Pass arguments to the gem command.
 
-    rvm.pl gem install unicorn # installs unicorn
+	rvm.pl gem install unicorn # installs unicorn
 
 Additionally you can use reinstall to reinstall your complete gemset. With a file containing the output of 'gem list' you can reproduce gemsets.
 
-    rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
+	rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
 
-    rvm.pl gem reinstall # reinstalls all installed gems
+	rvm.pl gem reinstall # reinstalls all installed gems
 
 =head2 gemset
 
 Switch to another set of gems.
 
-    rvm.pl gemset my_set
+	rvm.pl gemset my_set
+
+=head2 gemsets
+
+List gemsets.
+
+	rvm.pl gemsets
 
 =head1 LIMITATIONS AND TODO
 
@@ -150,7 +160,7 @@ Better support of gemsets needs to be added.
 
 =head1 AUTHOR
 
-Mugen Kenichi, C<< <mugen.kenichi at uninets.eu> >>
+Matthias Krull, C<< <m.krull at uninets.eu> >>
 
 =head1 BUGS
 
@@ -160,11 +170,11 @@ Report bugs at:
 
 =item * Ruby::VersionManager issue tracker
 
-L<https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+L<https://github.com/uninets/p5-Ruby-VersionManager/issues>
 
 =item * support at uninets.eu
 
-C<< <mugen.kenichi at uninets.eu> >>
+C<< <m.krull at uninets.eu> >>
 
 =back
 
@@ -174,7 +184,7 @@ C<< <mugen.kenichi at uninets.eu> >>
 
 =item * Technical support
 
-C<< <mugen.kenichi at uninets.eu> >>
+C<< <m.krull at uninets.eu> >>
 
 =back
 

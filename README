@@ -5,7 +5,7 @@ WARNING!
     This is an unstable development release not ready for production!
 
 VERSION
-    Version 0.003019
+    Version 0.003020
 
 SYNOPSIS
     The Ruby::VersionManager Module will provide a subset of the bash rvm.
@@ -29,6 +29,9 @@ ATTRIBUTES
     Name your gemset. More sophisticated support for gemsets needs to be
     implemented.
 
+  gemsets
+    Returns an array of the created gemsets.
+
   gem
     Uses Ruby::VersionManager::Gem to pass arguments to the 'gem' command.
     Additionally you can resemble gemsets from other users or machines by
@@ -36,14 +39,14 @@ ATTRIBUTES
     omiting the file name the currently installed gemset will be completely
     reinstalled without pulling in any additional dependencies.
 
-        $rvm->gem('reinstall', ($filename)); # install all gems given in the file
-        $rvm->gem('reinstall');              # reinstall all gems from the currently used gemset
+            $rvm->gem('reinstall', ($filename)); # install all gems given in the file
+            $rvm->gem('reinstall');              # reinstall all gems from the currently used gemset
 
-        $rvm->gem('install', ('unicorn', '-v=4.0.1));   # install unicorn. Same as 'gem install unicorn -v=4.0.1' on the command line
+            $rvm->gem('install', ('unicorn', '-v=4.0.1));   # install unicorn. Same as 'gem install unicorn -v=4.0.1' on the command line
 
   agent_string
     The user agent used when downloading ruby. Defaults to
-    Ruby::VersionManager/0.003019.
+    Ruby::VersionManager/0.003020.
 
   archive_type
     Type of the ruby archive to download. Defaults to .tar.bz2, valid are
@@ -60,15 +63,15 @@ CONSTRUCTION
     at construction if you want another directory than default because
     Ruby::VersionManager->new will bootstrap the needed directories.
 
-        my $rvm = Ruby:VersionManager->new;
+            my $rvm = Ruby:VersionManager->new;
 
     Or
 
-        my $rvm = Ruby:VersionManager->new(
-            rootdir => '/path/to/root',
-            ruby_version => '1.8',
-            gemset => 'name_of_the_set',
-        );
+            my $rvm = Ruby:VersionManager->new(
+                    rootdir => '/path/to/root',
+                    ruby_version => '1.8',
+                    gemset => 'name_of_the_set',
+            );
 
 METHODS
   available_rubies
@@ -80,12 +83,12 @@ METHODS
   list
     Print a list of available and installed ruby versions to STDOUT.
 
-        $rvm->list;
+            $rvm->list;
 
   updatedb
     Update database of available ruby versions.
 
-        $rvm->updatedb;
+            $rvm->updatedb;
 
   install
     Install a ruby version. If no version is given the latest stable release
@@ -96,53 +99,53 @@ METHODS
 
     Latest ruby
 
-        $rvm->ruby_version('1.9');
-        $rvm->install;
+            $rvm->ruby_version('1.9');
+            $rvm->install;
 
     Latest ruby-1.8
 
-        $rvm->ruby_version('1.8');
-        $rvm->install;
+            $rvm->ruby_version('1.8');
+            $rvm->install;
 
     Install preview
 
-        $rvm->ruby_version('ruby-1.9.3-preview1');
-        $rvm->install;
+            $rvm->ruby_version('ruby-1.9.3-preview1');
+            $rvm->install;
 
   uninstall
     Remove a ruby version and the source dir including the downloaded
     archive. You have to provide the full exact version of the ruby you want
     to remove as shown with list.
 
-        $rvm->ruby_version('ruby-1.9.3-preview1');
-        $rvm->uninstall;
+            $rvm->ruby_version('ruby-1.9.3-preview1');
+            $rvm->uninstall;
 
   switch_gemset
     Update the environment to use another gem set for the corrently active
     ruby.
 
-        $rvm->switch_gemset('another_set')
+            $rvm->switch_gemset('another_set')
 
 LIMITATIONS AND TODO
     Currently Ruby::VersionManager is only tested to be running on Linux
     with bash installed. Better support of gemsets needs to be added.
 
 AUTHOR
-    Mugen Kenichi, "<mugen.kenichi at uninets.eu>"
+    Matthias Krull, "<m.krull at uninets.eu>"
 
 BUGS
     Report bugs at:
 
     * Ruby::VersionManager issue tracker
 
-      <https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+      <https://github.com/uninets/p5-Ruby-VersionManager/issues>
 
     * support at uninets.eu
 
-      "<mugen.kenichi at uninets.eu>"
+      "<m.krull at uninets.eu>"
 
 SUPPORT
     * Technical support
 
-      "<mugen.kenichi at uninets.eu>"
+      "<m.krull at uninets.eu>"
 

@@ -1,13 +1,13 @@
 ---
 abstract: 'Manage ruby versions'
 author:
-  - 'mugen Kenichi <mugen.kenichi@uninets.eu>'
+  - 'Matthias Krull <m.krull@uninets.eu>'
 build_requires:
   Test::More: 0
 configure_requires:
   Module::Build: 0.38
 dynamic_config: 1
-generated_by: 'Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Module::Build version 0.4005, CPAN::Meta::Converter version 2.131560'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -19,16 +19,16 @@ no_index:
 provides:
   Ruby::VersionManager:
     file: lib/Ruby/VersionManager.pm
-    version: 0.003019
+    version: 0.003020
   Ruby::VersionManager::Config:
     file: lib/Ruby/VersionManager/Config.pm
-    version: 0.003019
+    version: 0.003020
   Ruby::VersionManager::Gem:
     file: lib/Ruby/VersionManager/Gem.pm
-    version: 0.003019
+    version: 0.003020
   Ruby::VersionManager::Version:
     file: lib/Ruby/VersionManager/Version.pm
-    version: 0.003019
+    version: 0.003020
 requires:
   Cwd: 0
   File::Path: 0
@@ -40,4 +40,4 @@ requires:
   perl: 5.01
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.003019
+version: 0.003020

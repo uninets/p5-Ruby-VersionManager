@@ -1,10 +1,10 @@
 {
    "abstract" : "Manage ruby versions",
    "author" : [
-      "mugen Kenichi <mugen.kenichi@uninets.eu>"
+      "Matthias Krull <m.krull@uninets.eu>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Module::Build version 0.4005, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -45,19 +45,19 @@
    "provides" : {
       "Ruby::VersionManager" : {
          "file" : "lib/Ruby/VersionManager.pm",
-         "version" : "0.003019"
+         "version" : "0.003020"
       },
       "Ruby::VersionManager::Config" : {
          "file" : "lib/Ruby/VersionManager/Config.pm",
-         "version" : "0.003019"
+         "version" : "0.003020"
       },
       "Ruby::VersionManager::Gem" : {
          "file" : "lib/Ruby/VersionManager/Gem.pm",
-         "version" : "0.003019"
+         "version" : "0.003020"
       },
       "Ruby::VersionManager::Version" : {
          "file" : "lib/Ruby/VersionManager/Version.pm",
-         "version" : "0.003019"
+         "version" : "0.003020"
       }
    },
    "release_status" : "stable",
@@ -66,5 +66,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.003019"
+   "version" : "0.003020"
 }

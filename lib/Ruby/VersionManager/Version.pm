@@ -12,7 +12,7 @@ sub new {
 
 sub get {
     my $self    = shift;
-    my $VERSION = version->declare('0.03.19')->numify;
+    my $VERSION = version->declare('0.03.20')->numify;
     return $VERSION;
 }
 
@@ -30,7 +30,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003019
+Version 0.003020
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,7 @@ Or
 
 =head1 AUTHOR
 
-Mugen Kenichi, C<< <mugen.kenichi at uninets.eu> >>
+Matthias Krull, C<< <m.krull at uninets.eu> >>
 
 =head1 BUGS
 
@@ -64,11 +64,11 @@ Report bugs at:
 
 =item * Ruby::VersionManager issue tracker
 
-L<https://github.com/mugenken/p5-Ruby-VersionManager/issues>
+L<https://github.com/uninets/p5-Ruby-VersionManager/issues>
 
 =item * support at uninets.eu
 
-C<< <mugen.kenichi at uninets.eu> >>
+C<< <m.krull at uninets.eu> >>
 
 =back
 
@@ -78,7 +78,7 @@ C<< <mugen.kenichi at uninets.eu> >>
 
 =item * Technical support
 
-C<< <mugen.kenichi at uninets.eu> >>
+C<< <m.krull at uninets.eu> >>
 
 =back
 
