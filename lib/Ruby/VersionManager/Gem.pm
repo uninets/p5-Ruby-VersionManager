@@ -7,102 +7,108 @@ use feature 'say';
 use warnings;
 use Data::Dumper;
 
+our $VERSION = 0.004002;
+
 has _gem_list => ( is => 'rw' );
 has _dispatch => ( is => 'rw' );
 has _options  => ( is => 'rw' );
 
 sub BUILD {
-    my ($self) = @_;
+	my ($self) = @_;
 
-    my $dispatch = { reinstall => $self->can('_reinstall'), };
+	my $dispatch = { reinstall => $self->can('_reinstall'), };
 
-    $self->_dispatch($dispatch);
+	$self->_dispatch($dispatch);
 
-    return 1;
+	return 1;
 }
 
 sub run_action {
-    my ( $self, $action, @options ) = @_;
+	my ( $self, $action, @options ) = @_;
 
-    if ( exists $self->_dispatch->{$action} ) {
-        $self->_options(@options);
-        $self->_dispatch->{$action}->($self);
-    }
-    else {
-        system 'gem ' . join ' ', ( $action, @options );
-    }
+	if ( exists $self->_dispatch->{$action} ) {
+		$self->_options(@options);
+		$self->_dispatch->{$action}->($self);
+	}
+	else {
+		system 'gem ' . join ' ', ( $action, @options );
+	}
 
-    return 1;
+	return 1;
 }
 
 sub _reinstall {
-    my ($self) = @_;
+	my ($self) = @_;
 
-    if ( defined $self->_gem_list && -f $self->_gem_list ) {
-        my $gemlist = '';
-        {
-            local $/;
-            open my $fh, '<', $self->_gem_list;
-            $gemlist = <$fh>;
-            close $fh;
-        }
-        $self->_gem_list( $self->_parse_gemlist($gemlist) );
-    }
-    elsif ( defined $self->_options && -f ( $self->_options )[0] ) {
-        my $gemlist = '';
-        {
-            local $/;
-            open my $fh, '<', ( $self->_options )[0];
-            $gemlist = <$fh>;
-            close $fh;
-        }
-        $self->_gem_list( $self->_parse_gemlist($gemlist) );
-    }
-    else {
-        my $gemlist = qx[gem list];
-        $self->_gem_list( $self->_parse_gemlist($gemlist) );
-    }
+	my $stdin .= $_ while (<>);
+	if ($stdin) {
+		$self->_gem_list( $self->_parse_gemlist($stdin));
+	}
+	elsif ( defined $self->_gem_list && -f $self->_gem_list ) {
+		my $gemlist = '';
+		{
+			local $/;
+			open my $fh, '<', $self->_gem_list;
+			$gemlist = <$fh>;
+			close $fh;
+		}
+		$self->_gem_list( $self->_parse_gemlist($gemlist) );
+	}
+	elsif ( defined $self->_options && -f ( $self->_options )[0] ) {
+		my $gemlist = '';
+		{
+			local $/;
+			open my $fh, '<', ( $self->_options )[0];
+			$gemlist = <$fh>;
+			close $fh;
+		}
+		$self->_gem_list( $self->_parse_gemlist($gemlist) );
+	}
+	else {
+		my $gemlist = qx[gem list];
+		$self->_gem_list( $self->_parse_gemlist($gemlist) );
+	}
 
-    $self->_install_gems( $self->_gem_list, { nodeps => 1 } );
+	$self->_install_gems( $self->_gem_list, { nodeps => 1 } );
 }
 
 sub _parse_gemlist {
-    my ( $self, $gemlist ) = @_;
+	my ( $self, $gemlist ) = @_;
 
-    my $gems = {};
-    for my $line ( split /\n/, $gemlist ) {
-        my ( $gem, $versions ) = $line =~ /
-            ([-_\w]+)\s # capture gem name
-            [(](
-                (?:
-                    (?:
-                        (?:\d+\.)*\d+
-                    )
-                    ,?\s?
-                )+
-            )[)]/mxg;
-        $gems->{$gem} = [ split ', ', $versions ] if defined $gem;
-    }
+	my $gems = {};
+	for my $line ( split /\n/, $gemlist ) {
+		my ( $gem, $versions ) = $line =~ /
+			([-_\w]+)\s # capture gem name
+			[(](
+				(?:
+					(?:
+						(?:\d+\.)*\d+
+					)
+					,?\s?
+				)+
+			)[)]/mxg;
+		$gems->{$gem} = [ split ', ', $versions ] if defined $gem;
+	}
 
-    return $gems;
+	return $gems;
 }
 
 sub _install_gems {
-    my ( $self, $gems, $opts ) = @_;
+	my ( $self, $gems, $opts ) = @_;
 
-    for my $gem ( keys %$gems ) {
-        for my $version ( @{ $gems->{$gem} } ) {
-            my $cmd = "gem install $gem ";
-            $cmd .= "-v=$version";
-            if ( defined $opts && $opts->{'nodeps'} ) {
-                $cmd .= " --ignore-dependencies";
-            }
+	for my $gem ( keys %$gems ) {
+		for my $version ( @{ $gems->{$gem} } ) {
+			my $cmd = "gem install $gem ";
+			$cmd .= "-v=$version";
+			if ( defined $opts && $opts->{'nodeps'} ) {
+				$cmd .= " --ignore-dependencies";
+			}
 
-            my $output = qx[$cmd];
-        }
-    }
+			my $output = qx[$cmd];
+		}
+	}
 
-    return 1;
+	return 1;
 }
 
 1;
@@ -119,7 +125,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003020
+Version 0.004002
 
 =head1 SYNOPSIS
 
@@ -127,7 +133,7 @@ The Ruby::VersionManager::Gem module is basically a wrapper around the gem comma
 
 =head1 CONSTRUCTION
 
-    my $gem = Ruby::VersionManager::Gem->new;
+	my $gem = Ruby::VersionManager::Gem->new;
 
 =head1 METHODS
 
@@ -135,7 +141,7 @@ The Ruby::VersionManager::Gem module is basically a wrapper around the gem comma
 
 Run the gem command with parameters or use one of the additional functions.
 
-    $gem->run_action('install', ('unicorn', '-v=4.0.1'));
+	$gem->run_action('install', ('unicorn', '-v=4.0.1'));
 
 =head1 ACTIONS
 
@@ -143,9 +149,9 @@ The additional actions to pass to Ruby::VersionManager::Gem::run_action.
 
 =head2 reinstall
 
-You can resemble gemsets from other users or machines by using reinstall with a file containing the output of 'gem list'. When omiting the file name the currently installed gemset will be completely reinstalled without pulling in any additional dependencies.
+You can resemble gemsets from other users or machines by using reinstall with a file containing the output of 'gem list'. When omiting the file name the gemset is read from <STDIN>. If nothing can be read the currently installed gemset will be completely reinstalled without pulling in any additional dependencies.
 
-    $gem->run_action('reinstall', ($filename));
+	$gem->run_action('reinstall', ($filename));
 
 =head1 AUTHOR
 

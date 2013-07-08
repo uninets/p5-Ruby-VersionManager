@@ -45,7 +45,7 @@ my $dispatch_table = {
 		$rvm->uninstall;
 	},
 	version => sub {
-		say Ruby::VersionManager::Version->get;
+		say $rvm->version;
 		exit 0;
 	},
 };
@@ -69,7 +69,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003020
+Version 0.004002
 
 =head1 SYNOPSIS
 

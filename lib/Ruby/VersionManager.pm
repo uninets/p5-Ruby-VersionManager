@@ -12,9 +12,9 @@ use LWP::UserAgent;
 use HTTP::Request;
 use LWP::Simple;
 use File::Path;
+use File::Spec;
 use Cwd qw'abs_path cwd';
 
-use Ruby::VersionManager::Version;
 use Ruby::VersionManager::Gem;
 
 has rootdir          => ( is => 'rw' );
@@ -26,13 +26,16 @@ has agent_string     => ( is => 'rw' );
 has archive_type     => ( is => 'rw' );
 has gemset           => ( is => 'rw' );
 has installed_rubies => ( is => 'rw' );
+has version          => ( is => 'rw' );
+
+our $VERSION = 0.004002;
 
 sub BUILD {
 	my ($self) = @_;
 
-	my $v = Ruby::VersionManager::Version->new;
+	$self->version($VERSION);
 
-	$self->agent_string( 'Ruby::VersionManager/' . $v->get );
+	$self->agent_string( 'Ruby::VersionManager/' . $self->version );
 	$self->archive_type('.tar.bz2') unless $self->archive_type;
 	$self->rootdir( abs_path( $self->rootdir ) ) if $self->rootdir;
 	$self->_make_base or die;
@@ -44,16 +47,16 @@ sub BUILD {
 sub _make_base {
 	my ($self) = @_;
 
-	$self->rootdir( $ENV{'HOME'} . '/.ruby_vmanager' ) unless $self->rootdir;
+	$self->rootdir( File::Spec->catdir($ENV{'HOME'}, '.ruby_vmanager' )) unless $self->rootdir;
 
 	if ( not -d $self->rootdir ) {
 		say "root directory for installation not found.\nbootstraping to " . $self->rootdir;
 		mkdir $self->rootdir;
-		mkdir $self->rootdir . '/bin';
-		mkdir $self->rootdir . '/source';
-		mkdir $self->rootdir . '/var';
-		mkdir $self->rootdir . '/gemsets';
-		mkdir $self->rootdir . '/rubies';
+		mkdir File::Spec->catdir($self->rootdir, 'bin');
+		mkdir File::Spec->catdir($self->rootdir, 'source');
+		mkdir File::Spec->catdir($self->rootdir, 'var');
+		mkdir File::Spec->catdir($self->rootdir, 'gemsets');
+		mkdir File::Spec->catdir($self->rootdir, 'rubies');
 	}
 
 	return 1;
@@ -63,8 +66,8 @@ sub _make_base {
 sub _check_db {
 	my ($self) = @_;
 
-	$self->updatedb unless -f $self->rootdir . '/var/db.yml';
-	$self->available_rubies( YAML::LoadFile( $self->rootdir . '/var/db.yml' ) );
+	$self->updatedb unless -f File::Spec->catfile($self->rootdir, 'var', 'db.yml');
+	$self->available_rubies( YAML::LoadFile( File::Spec->catfile($self->rootdir, 'var', 'db.yml')));
 
 }
 
@@ -74,13 +77,13 @@ sub _check_installed {
 	my $rubies         = {};
 	my $checked_rubies = {};
 
-	if ( -f $self->rootdir . '/var/installed.yml' ) {
-		$rubies = YAML::LoadFile( $self->rootdir . '/var/installed.yml' );
+	if ( -f File::Spec->catfile($self->rootdir, 'var', 'installed.yml' )) {
+		$rubies = YAML::LoadFile( File::Spec->catfile($self->rootdir, 'var', 'installed.yml' ));
 	}
 
 	for my $major ( keys %$rubies ) {
 		for my $ruby ( @{ $rubies->{$major} } ) {
-			if ( -x $self->rootdir . '/rubies/' . $major . '/' . $ruby . '/bin/ruby' ) {
+			if ( -x File::Spec->catfile($self->rootdir, 'rubies', $major, $ruby, 'bin', 'ruby' )) {
 				push @{ $checked_rubies->{$major} }, $ruby;
 			}
 		}
@@ -93,7 +96,7 @@ sub _check_installed {
 sub updatedb {
 	my ($self) = @_;
 
-	my @versions = ( 1.8, 1.9, );
+	my @versions = qw( 1.8 1.9 2.0 );
 
 	my $rubies = {};
 
@@ -118,7 +121,7 @@ sub updatedb {
 
 	die "Did not get any data from ftp.ruby-lang.org" unless %$rubies;
 
-	YAML::DumpFile( $self->rootdir . '/var/db.yml', $rubies );
+	YAML::DumpFile( File::Spec->catfile($self->rootdir, 'var', 'db.yml'), $rubies );
 
 	$self->_check_db;
 
@@ -147,7 +150,7 @@ sub uninstall {
 sub _remove_ruby {
 	my ($self) = @_;
 
-	my $dir_to_remove = $self->rootdir . '/rubies/' . $self->major_version . '/' . $self->ruby_version;
+	my $dir_to_remove = File::Spec->catdir($self->rootdir, 'rubies', $self->major_version, $self->ruby_version);
 
 	File::Path::rmtree($dir_to_remove) if -d $dir_to_remove;
 }
@@ -230,9 +233,10 @@ sub gemsets {
 		my $installed = $self->installed_rubies->{$major_version};
 
 		if ($self->ruby_version ~~ @$installed){
-			my $dir = $self->rootdir . '/gemsets/' . $self->major_version . '/' . $self->ruby_version;
+			my $dir = File::Spec->catdir($self->rootdir, 'gemsets', $self->major_version, $self->ruby_version);
 			opendir my $dh, $dir || die "Could not open $dir.";
-			@gemsets = grep { !/^\.\.?$/ } readdir $dh;
+			# filter . and .. and mark current gemset with a *
+			@gemsets = map { $ENV{GEM_PATH} =~ /$_/ ? "$_ *" : $_ } grep { !/^\.\.?$/ } readdir $dh;
 		}
 	}
 
@@ -347,14 +351,14 @@ sub install {
 sub _update_installed {
 	my ($self) = @_;
 
-	YAML::DumpFile( $self->rootdir . '/var/installed.yml', $self->installed_rubies );
+	YAML::DumpFile( File::Spec->catfile($self->rootdir, 'var', 'installed.yml'), $self->installed_rubies );
 
 }
 
 sub _unpack_ruby {
 	my ($self) = @_;
 
-	system 'tar xf ' . $self->rootdir . '/source/' . $self->ruby_version . $self->archive_type . ' -C  ' . $self->rootdir . '/source/';
+	system 'tar xf ' . File::Spec->catfile($self->rootdir, 'source', $self->ruby_version . $self->archive_type) . ' -C  ' . File::Spec->catdir($self->rootdir, 'source');
 
 	return 1;
 }
@@ -362,12 +366,16 @@ sub _unpack_ruby {
 sub _make_install {
 	my ($self) = @_;
 
-	my $prefix = $self->rootdir . '/rubies/' . $self->major_version . '/' . $self->ruby_version;
+	my $prefix = File::Spec->catdir($self->rootdir, 'rubies', $self->major_version, $self->ruby_version);
 
 	my $cwd = cwd();
 
-	chdir $self->rootdir . '/source/' . $self->ruby_version;
+	chdir File::Spec->catdir($self->rootdir, 'source', $self->ruby_version);
 
+	# TODO make more portable
+	# TODO make options depend on ruby version
+	# TODO make silent
+	# TODO make use of multicore CPUs
 	system "./configure --with-ssl --with-yaml --enable-ipv6 --enable-pthread --enable-shared --prefix=$prefix && make && make install";
 
 	chdir $cwd;
@@ -379,17 +387,25 @@ sub _setup_environment {
 	my ($self) = @_;
 
 	$ENV{RUBY_VERSION} = $self->ruby_version;
-	$ENV{GEM_PATH}     = abs_path( $self->rootdir ) . '/gemsets/' . $self->major_version . '/' . $self->ruby_version . '/' . $self->gemset;
-	$ENV{GEM_HOME}     = abs_path( $self->rootdir ) . '/gemsets/' . $self->major_version . '/' . $self->ruby_version . '/' . $self->gemset;
-	$ENV{MY_RUBY_HOME} = abs_path( $self->rootdir ) . '/rubies/' . $self->major_version . '/' . $self->ruby_version;
-	$ENV{PATH}         = abs_path( $self->rootdir ) . '/rubies/' . $self->major_version . '/' . $self->ruby_version . '/bin' . ':' . abs_path( $self->rootdir ) . '/gemsets/' . $self->major_version . '/' . $self->ruby_version . '/' . $self->gemset . '/bin' . ':' . $ENV{PATH};
+	$ENV{GEM_PATH}     = File::Spec->catdir( abs_path( $self->rootdir ), 'gemsets', $self->major_version, $self->ruby_version, $self->gemset );
+	$ENV{GEM_HOME}     = File::Spec->catdir( abs_path( $self->rootdir ), 'gemsets', $self->major_version, $self->ruby_version, $self->gemset );
+	$ENV{MY_RUBY_HOME} = File::Spec->catdir( abs_path( $self->rootdir ), 'rubies', $self->major_version, $self->ruby_version );
+	$ENV{PATH}         = File::Spec->catdir( abs_path( $self->rootdir ), 'rubies', $self->major_version, $self->ruby_version, 'bin' )
+		. ':'
+		. File::Spec->catdir( abs_path( $self->rootdir ), 'gemsets', $self->major_version, $self->ruby_version, $self->gemset, 'bin' )
+		. ':'
+		. $ENV{PATH};
 
-	open my $rcfile, '>', $self->rootdir . '/var/ruby_vmanager.rc';
+	open my $rcfile, '>', File::Spec->catfile($self->rootdir, 'var', 'ruby_vmanager.rc');
 	say $rcfile 'export RUBY_VERSION=' . $self->ruby_version;
 	say $rcfile 'export GEM_PATH=' . $ENV{GEM_PATH};
 	say $rcfile 'export GEM_HOME=' . $ENV{GEM_HOME};
 	say $rcfile 'export MY_RUBY_HOME=' . $ENV{MY_RUBY_HOME};
-	say $rcfile 'export PATH=' . abs_path( $self->rootdir ) . '/rubies/' . $self->major_version . '/' . $self->ruby_version . '/bin' . ':' . abs_path( $self->rootdir ) . '/gemsets/' . $self->major_version . '/' . $self->ruby_version . '/' . $self->gemset . '/bin' . ':$PATH';
+	say $rcfile 'export PATH=' . File::Spec->catdir( abs_path( $self->rootdir ), 'rubies', $self->major_version, $self->ruby_version, 'bin' )
+		. ':'
+		. File::Spec->catdir( abs_path( $self->rootdir ), 'gemsets', $self->major_version, $self->ruby_version, $self->gemset, 'bin' )
+		. ':'
+		. $ENV{PATH};
 
 	close $rcfile;
 
@@ -401,7 +417,7 @@ sub _fetch_ruby {
 
 	my $url = 'ftp://ftp.ruby-lang.org/pub/ruby/' . $self->major_version . '/' . $self->ruby_version . $self->archive_type;
 
-	my $file = $self->rootdir . '/source/' . $self->ruby_version . $self->archive_type;
+	my $file = File::Spec->catfile($self->rootdir, 'source', $self->ruby_version . $self->archive_type);
 
 	if ( -f $file ) {
 		return 1;
@@ -418,26 +434,26 @@ sub _fetch_ruby {
 sub _install_rubygems {
 	my ($self) = @_;
 
-	if ( -d $self->rootdir . '/source/' . $self->ruby_version . '/bin/' ) {
-		my $source_bin_dir = $self->rootdir . '/source/' . $self->ruby_version . '/bin/';
-		my $ruby_bin_dir   = $ENV{MY_RUBY_HOME} . '/bin/';
+	if ( -d File::Spec->catdir($self->rootdir, 'source', $self->ruby_version, 'bin') ) {
+		my $source_bin_dir = File::Spec->catdir($self->rootdir, 'source', $self->ruby_version, 'bin');
+		my $ruby_bin_dir   = File::Spec->catdir($ENV{MY_RUBY_HOME}, 'bin');
 		system "cp $source_bin_dir/* $ruby_bin_dir";
 	}
 
 	unless ( -f $ENV{MY_RUBY_HOME} . '/bin/gem' ) {
 		my $url  = 'http://rubyforge.org/frs/download.php/70696/rubygems-1.3.7.tgz';
-		my $file = $self->rootdir . '/source/rubygems-1.3.7.tgz';
+		my $file = File::Spec->catfile($self->rootdir, 'source', 'rubygems-1.3.7.tgz');
 
 		unless ( -f $file ) {
 			my $result = LWP::Simple::getstore( $url, $file );
 			die if $result != 200;
 		}
 
-		system 'tar xf ' . $file . ' -C ' . $self->rootdir . '/source/';
+		system 'tar xf ' . $file . ' -C ' . File::Spec->catdir($self->rootdir, 'source');
 
 		my $cwd = cwd();
 
-		chdir $self->rootdir . '/source/rubygems-1.3.7';
+		chdir File::Spec->catdir($self->rootdir, 'source', 'rubygems-1.3.7');
 		system 'ruby setup.rb';
 	}
 
@@ -458,7 +474,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.003020
+Version 0.004002
 
 =head1 SYNOPSIS
 
@@ -499,7 +515,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.003020.
+Defaults to Ruby::VersionManager/0.004002.
 
 =head2 archive_type
 
@@ -585,6 +601,12 @@ You have to provide the full exact version of the ruby you want to remove as sho
 Update the environment to use another gem set for the corrently active ruby.
 
 	$rvm->switch_gemset('another_set')
+
+=head2 version
+
+Returns the numerical version of the distribution.
+
+	my $version = $rvm->version
 
 =head1 LIMITATIONS AND TODO
 
