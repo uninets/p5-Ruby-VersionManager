@@ -28,7 +28,7 @@ has gemset           => ( is => 'rw' );
 has installed_rubies => ( is => 'rw' );
 has version          => ( is => 'rw' );
 
-our $VERSION = 0.004002;
+our $VERSION = 0.004003;
 
 sub BUILD {
 	my ($self) = @_;
@@ -212,7 +212,7 @@ sub switch_gemset {
 			$self->gemset($gemset);
 			$self->_setup_environment;
 
-			return 1;
+			$self->_sub_shell;
 		}
 	}
 
@@ -346,6 +346,7 @@ sub install {
 		$self->_update_installed;
 	}
 
+	$self->_sub_shell;
 }
 
 sub _update_installed {
@@ -386,6 +387,8 @@ sub _make_install {
 sub _setup_environment {
 	my ($self) = @_;
 
+	$ENV{PATH} = $self->_clean_path;
+
 	$ENV{RUBY_VERSION} = $self->ruby_version;
 	$ENV{GEM_PATH}     = File::Spec->catdir( abs_path( $self->rootdir ), 'gemsets', $self->major_version, $self->ruby_version, $self->gemset );
 	$ENV{GEM_HOME}     = File::Spec->catdir( abs_path( $self->rootdir ), 'gemsets', $self->major_version, $self->ruby_version, $self->gemset );
@@ -410,6 +413,28 @@ sub _setup_environment {
 	close $rcfile;
 
 	return 1;
+}
+
+sub _clean_path {
+	my $self = shift;
+	my $rootdir = $self->rootdir;
+	my $seen = {};
+	my @path = grep {
+		$seen->{$_}++;
+		$seen->{$_} <= 1 && $_ !~ /$rootdir/
+	} split ':', $ENV{PATH};
+
+	return join ':', @path;
+}
+
+sub _sub_shell {
+	my $self = shift;
+	my $shell = $ENV{SHELL};
+
+	if ($shell) {
+		say "launching subshell with new settings.";
+		exec($shell);
+	}
 }
 
 sub _fetch_ruby {
@@ -474,7 +499,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.004002
+Version 0.004003
 
 =head1 SYNOPSIS
 
@@ -515,7 +540,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.004002.
+Defaults to Ruby::VersionManager/0.004003.
 
 =head2 archive_type
 
@@ -608,10 +633,9 @@ Returns the numerical version of the distribution.
 
 	my $version = $rvm->version
 
-=head1 LIMITATIONS AND TODO
+=head1 LIMITATIONS
 
-Currently Ruby::VersionManager is only tested to be running on Linux with bash installed.
-Better support of gemsets needs to be added.
+Currently Ruby::VersionManager is only tested to be running on Linux.
 
 =head1 AUTHOR
 

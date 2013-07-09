@@ -69,7 +69,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.004002
+Version 0.004003
 
 =head1 SYNOPSIS
 
@@ -120,6 +120,8 @@ To use the Ruby::VersionManager source ruby_vmanager.rc.
 
 	source ~/.ruby_vmanager/var/ruby_vmanager.rc
 
+After installation a subshell will be launched with the new settings.
+
 =head2 uninstall
 
 Remove a ruby version and the source dir including the downloaded archive.
@@ -143,20 +145,21 @@ Additionally you can use reinstall to reinstall your complete gemset. With a fil
 
 =head2 gemset
 
-Switch to another set of gems.
+Switch to another set of gems and launch a subshell with the new settings.
 
 	rvm.pl gemset my_set
 
 =head2 gemsets
 
-List gemsets.
+List gemsets of the currently used rubyversion.
 
 	rvm.pl gemsets
 
-=head1 LIMITATIONS AND TODO
+The current set is marked with an asterisk.
 
-Currently Ruby::VersionManager is only running on Linux with bash installed.
-Better support of gemsets needs to be added.
+=head1 LIMITATIONS
+
+Currently Ruby::VersionManager is only running on Linux.
 
 =head1 AUTHOR
 

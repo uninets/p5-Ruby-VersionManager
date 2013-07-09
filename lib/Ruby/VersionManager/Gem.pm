@@ -7,7 +7,7 @@ use feature 'say';
 use warnings;
 use Data::Dumper;
 
-our $VERSION = 0.004002;
+our $VERSION = 0.004003;
 
 has _gem_list => ( is => 'rw' );
 has _dispatch => ( is => 'rw' );
@@ -125,7 +125,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.004002
+Version 0.004003
 
 =head1 SYNOPSIS
 
