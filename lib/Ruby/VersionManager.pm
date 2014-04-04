@@ -111,7 +111,7 @@ sub updatedb {
 
         if ( $res->is_success ) {
             $rubies->{$version} = [];
-            for ( grep { $_ ~~ /ruby-.*\.tar\.bz2/ } split '\n', $res->content ) {
+            for ( grep { $_ ~~ /ruby.*\.tar\.bz2/ } split '\n', $res->content ) {
                 my $at = $self->archive_type;
                 ( my $ruby = $_ ) =~ s/(.*)$at/$1/;
                 push @{ $rubies->{$version} }, ( split ' ', $ruby )[-1];
@@ -250,16 +250,18 @@ sub _sort_rubies {
     my @sorted = ();
     my $major_versions;
 
-    for (@$rubies) {
-        my ( undef, $major, $patchlevel ) = split '-', $_;
+    for my $ruby (@$rubies) {
+        my ( undef, $major, $patchlevel ) = split '-', $ruby;
         $major_versions->{$major} = [] unless $major_versions->{$major};
         push @{ $major_versions->{$major} }, $patchlevel;
+        push @{ $major_versions->{$major} }, 'x' if !defined($patchlevel);
     }
 
     for my $version ( sort { $a cmp $b } keys %{$major_versions} ) {
         my @patchlevels = grep { defined $_ && $_ =~ /p\d{1,3}/ } @{ $major_versions->{$version} };
         my @pre         = grep { defined $_ && $_ =~ /preview\d{0,1}|rc\d{0,1}/ } @{ $major_versions->{$version} };
         my @old         = grep { defined $_ && $_ =~ /^\d/ } @{ $major_versions->{$version} };
+        my @new_scheme  = grep { defined $_ && $_ eq 'x' } @{ $major_versions->{$version} };
 
         my @numeric_levels;
         for my $level (@patchlevels) {
@@ -275,7 +277,9 @@ sub _sort_rubies {
         for ( ( sort { $a cmp $b } @old ), @patchlevels, ( sort { $a cmp $b } @pre ) ) {
             push @sorted, "ruby-$version-$_";
         }
-
+        for ( ( sort { $a cmp $b } @new_scheme ) ) {
+            push @sorted, "ruby-$version";
+        }
     }
 
     return @sorted;

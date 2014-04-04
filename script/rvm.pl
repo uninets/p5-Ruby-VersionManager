@@ -4,6 +4,7 @@ use 5.010;
 use strict;
 use feature 'say';
 use warnings;
+use lib 'lib';
 
 use Ruby::VersionManager;
 my $action  = shift;
@@ -14,47 +15,47 @@ die "No action defined." unless $action;
 my $rvm = Ruby::VersionManager->new();
 
 my $dispatch_table = {
-	list => sub {
-		$rvm->list;
-		exit 0;
-	},
-	updatedb => sub {
-		$rvm->updatedb;
-		exit 0;
-	},
-	gem => sub {
-		$rvm->gem(@options);
-	},
-	gemset => sub {
-		die "No ruby version installed or current version not maintained by rvm.pl" unless $rvm->switch_gemset(@options);
-	},
-	gemsets => sub {
-		say for $rvm->gemsets;
-		exit 0;
-	},
-	install => sub {
-		my $ruby_version = shift @options || '1.9';
-		$rvm->ruby_version($ruby_version);
-		$rvm->install;
-	},
-	uninstall => sub {
-		my $ruby_version = shift @options;
-		die "no version defined" unless $ruby_version;
+    list => sub {
+        $rvm->list;
+        exit 0;
+    },
+    updatedb => sub {
+        $rvm->updatedb;
+        exit 0;
+    },
+    gem => sub {
+        $rvm->gem(@options);
+    },
+    gemset => sub {
+        die "No ruby version installed or current version not maintained by rvm.pl" unless $rvm->switch_gemset(@options);
+    },
+    gemsets => sub {
+        say for $rvm->gemsets;
+        exit 0;
+    },
+    install => sub {
+        my $ruby_version = shift @options || '1.9';
+        $rvm->ruby_version($ruby_version);
+        $rvm->install;
+    },
+    uninstall => sub {
+        my $ruby_version = shift @options;
+        die "no version defined" unless $ruby_version;
 
-		$rvm->ruby_version($ruby_version);
-		$rvm->uninstall;
-	},
-	version => sub {
-		say $rvm->version;
-		exit 0;
-	},
+        $rvm->ruby_version($ruby_version);
+        $rvm->uninstall;
+    },
+    version => sub {
+        say $rvm->version;
+        exit 0;
+    },
 };
 
 if ( exists $dispatch_table->{$action} ) {
-	$dispatch_table->{$action}->();
+    $dispatch_table->{$action}->();
 }
 else {
-	say "No action $action defined";
+    say "No action $action defined";
 }
 
 __END__

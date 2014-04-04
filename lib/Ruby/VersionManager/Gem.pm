@@ -14,70 +14,70 @@ has _dispatch => ( is => 'rw' );
 has _options  => ( is => 'rw' );
 
 sub BUILD {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $dispatch = { reinstall => $self->can('_reinstall'), };
+    my $dispatch = { reinstall => $self->can('_reinstall'), };
 
-	$self->_dispatch($dispatch);
+    $self->_dispatch($dispatch);
 
-	return 1;
+    return 1;
 }
 
 sub run_action {
-	my ( $self, $action, @options ) = @_;
+    my ( $self, $action, @options ) = @_;
 
-	if ( exists $self->_dispatch->{$action} ) {
-		$self->_options(@options);
-		$self->_dispatch->{$action}->($self);
-	}
-	else {
-		system 'gem ' . join ' ', ( $action, @options );
-	}
+    if ( exists $self->_dispatch->{$action} ) {
+        $self->_options(@options);
+        $self->_dispatch->{$action}->($self);
+    }
+    else {
+        system 'gem ' . join ' ', ( $action, @options );
+    }
 
-	return 1;
+    return 1;
 }
 
 sub _reinstall {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $stdin .= $_ while (<>);
-	if ($stdin) {
-		$self->_gem_list( $self->_parse_gemlist($stdin));
-	}
-	elsif ( defined $self->_gem_list && -f $self->_gem_list ) {
-		my $gemlist = '';
-		{
-			local $/;
-			open my $fh, '<', $self->_gem_list;
-			$gemlist = <$fh>;
-			close $fh;
-		}
-		$self->_gem_list( $self->_parse_gemlist($gemlist) );
-	}
-	elsif ( defined $self->_options && -f ( $self->_options )[0] ) {
-		my $gemlist = '';
-		{
-			local $/;
-			open my $fh, '<', ( $self->_options )[0];
-			$gemlist = <$fh>;
-			close $fh;
-		}
-		$self->_gem_list( $self->_parse_gemlist($gemlist) );
-	}
-	else {
-		my $gemlist = qx[gem list];
-		$self->_gem_list( $self->_parse_gemlist($gemlist) );
-	}
+    my $stdin .= $_ while (<>);
+    if ($stdin) {
+        $self->_gem_list( $self->_parse_gemlist($stdin) );
+    }
+    elsif ( defined $self->_gem_list && -f $self->_gem_list ) {
+        my $gemlist = '';
+        {
+            local $/;
+            open my $fh, '<', $self->_gem_list;
+            $gemlist = <$fh>;
+            close $fh;
+        }
+        $self->_gem_list( $self->_parse_gemlist($gemlist) );
+    }
+    elsif ( defined $self->_options && -f ( $self->_options )[0] ) {
+        my $gemlist = '';
+        {
+            local $/;
+            open my $fh, '<', ( $self->_options )[0];
+            $gemlist = <$fh>;
+            close $fh;
+        }
+        $self->_gem_list( $self->_parse_gemlist($gemlist) );
+    }
+    else {
+        my $gemlist = qx[gem list];
+        $self->_gem_list( $self->_parse_gemlist($gemlist) );
+    }
 
-	$self->_install_gems( $self->_gem_list, { nodeps => 1 } );
+    $self->_install_gems( $self->_gem_list, { nodeps => 1 } );
 }
 
 sub _parse_gemlist {
-	my ( $self, $gemlist ) = @_;
+    my ( $self, $gemlist ) = @_;
 
-	my $gems = {};
-	for my $line ( split /\n/, $gemlist ) {
-		my ( $gem, $versions ) = $line =~ /
+    my $gems = {};
+    for my $line ( split /\n/, $gemlist ) {
+        my ( $gem, $versions ) = $line =~ /
 			([-_\w]+)\s # capture gem name
 			[(](
 				(?:
@@ -87,28 +87,28 @@ sub _parse_gemlist {
 					,?\s?
 				)+
 			)[)]/mxg;
-		$gems->{$gem} = [ split ', ', $versions ] if defined $gem;
-	}
+        $gems->{$gem} = [ split ', ', $versions ] if defined $gem;
+    }
 
-	return $gems;
+    return $gems;
 }
 
 sub _install_gems {
-	my ( $self, $gems, $opts ) = @_;
+    my ( $self, $gems, $opts ) = @_;
 
-	for my $gem ( keys %$gems ) {
-		for my $version ( @{ $gems->{$gem} } ) {
-			my $cmd = "gem install $gem ";
-			$cmd .= "-v=$version";
-			if ( defined $opts && $opts->{'nodeps'} ) {
-				$cmd .= " --ignore-dependencies";
-			}
+    for my $gem ( keys %$gems ) {
+        for my $version ( @{ $gems->{$gem} } ) {
+            my $cmd = "gem install $gem ";
+            $cmd .= "-v=$version";
+            if ( defined $opts && $opts->{'nodeps'} ) {
+                $cmd .= " --ignore-dependencies";
+            }
 
-			my $output = qx[$cmd];
-		}
-	}
+            my $output = qx[$cmd];
+        }
+    }
 
-	return 1;
+    return 1;
 }
 
 1;
