@@ -96,7 +96,7 @@ sub _check_installed {
 sub updatedb {
     my ($self) = @_;
 
-    my @versions = qw( 1.8 1.9 2.0 );
+    my @versions = qw( 1.8 1.9 2.0 2.1 );
 
     my $rubies = {};
 
@@ -258,8 +258,8 @@ sub _sort_rubies {
 
     for my $version ( sort { $a cmp $b } keys %{$major_versions} ) {
         my @patchlevels = grep { defined $_ && $_ =~ /p\d{1,3}/ } @{ $major_versions->{$version} };
-        my @pre = grep { defined $_ && $_ =~ /preview\d{0,1}|rc\d{0,1}/ } @{ $major_versions->{$version} };
-        my @old = grep { defined $_ && $_ =~ /^\d/ } @{ $major_versions->{$version} };
+        my @pre         = grep { defined $_ && $_ =~ /preview\d{0,1}|rc\d{0,1}/ } @{ $major_versions->{$version} };
+        my @old         = grep { defined $_ && $_ =~ /^\d/ } @{ $major_versions->{$version} };
 
         my @numeric_levels;
         for my $level (@patchlevels) {
