@@ -382,7 +382,9 @@ sub _make_install {
     # TODO make options depend on ruby version
     # TODO make silent
     # TODO make use of multicore CPUs
-    system "./configure --with-ssl --with-yaml --enable-ipv6 --enable-pthread --enable-shared --prefix=$prefix && make && make install";
+    my $cores = `nproc`;
+    chomp($cores);
+    system "./configure --with-ssl --with-yaml --enable-ipv6 --enable-pthread --enable-shared --prefix=$prefix && make -j$cores && make install";
 
     chdir $cwd;
 
