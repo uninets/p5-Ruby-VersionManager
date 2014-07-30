@@ -1,0 +1,15 @@
+Changes
+LICENSE
+MANIFEST
+META.yml
+Makefile.PL
+README
+README.md
+dist.ini
+lib/Ruby/VersionManager.pm
+lib/Ruby/VersionManager/Gem.pm
+script/rvm.pl
+t/00-load.t
+t/manifest.t
+t/pod-coverage.t
+t/pod.t
