@@ -28,7 +28,7 @@ has gemset           => ( is => 'rw' );
 has installed_rubies => ( is => 'rw' );
 has version          => ( is => 'rw' );
 
-our $VERSION = 0.004003;
+our $VERSION = 0.004004;
 
 sub BUILD {
 	my ($self) = @_;
@@ -94,9 +94,10 @@ sub _check_installed {
 }
 
 sub updatedb {
+    no if $] >= 5.018, warnings => "experimental::smartmatch";
 	my ($self) = @_;
 
-	my @versions = qw( 1.8 1.9 2.0 );
+	my @versions = qw( 1.8 1.9 2.0 2.1 );
 
 	my $rubies = {};
 
@@ -111,7 +112,7 @@ sub updatedb {
 
 		if ( $res->is_success ) {
 			$rubies->{$version} = [];
-			for ( grep { $_ ~~ /ruby-.*\.tar\.bz2/ } split '\n', $res->content ) {
+			for ( grep { $_ ~~ /ruby.*\.tar\.bz2/ } split '\n', $res->content ) {
 				my $at = $self->archive_type;
 				( my $ruby = $_ ) =~ s/(.*)$at/$1/;
 				push @{ $rubies->{$version} }, ( split ' ', $ruby )[-1];
@@ -198,6 +199,7 @@ sub gem {
 }
 
 sub switch_gemset {
+    no if $] >= 5.018, warnings => "experimental::smartmatch";
 	my ($self, $gemset) = @_;
 
 	if ($ENV{RUBY_VERSION} && $gemset){
@@ -220,6 +222,7 @@ sub switch_gemset {
 }
 
 sub gemsets {
+    no if $] >= 5.018, warnings => "experimental::smartmatch";
 	my $self = shift;
 
 	my @gemsets = ();
@@ -252,6 +255,7 @@ sub _sort_rubies {
 	for (@$rubies) {
 		my ( undef, $major, $patchlevel ) = split '-', $_;
 		$major_versions->{$major} = [] unless $major_versions->{$major};
+        $patchlevel = 'x' if !defined($patchlevel);
 		push @{ $major_versions->{$major} }, $patchlevel;
 	}
 
@@ -259,6 +263,7 @@ sub _sort_rubies {
 		my @patchlevels = grep { defined $_ && $_ =~ /p\d{1,3}/ } @{ $major_versions->{$version} };
 		my @pre         = grep { defined $_ && $_ =~ /preview\d{0,1}|rc\d{0,1}/ } @{ $major_versions->{$version} };
 		my @old         = grep { defined $_ && $_ =~ /^\d/ } @{ $major_versions->{$version} };
+		my @no_plevel   = grep { defined $_ && $_ =~ 'x' } @{ $major_versions->{$version} };
 
 		my @numeric_levels;
 		for my $level (@patchlevels) {
@@ -275,7 +280,10 @@ sub _sort_rubies {
 			push @sorted, "ruby-$version-$_";
 		}
 
-	}
+		for ( ( sort { $a cmp $b } @no_plevel ) ) {
+			push @sorted, "ruby-$version";
+		}
+    }
 
 	return @sorted;
 }
@@ -322,6 +330,7 @@ sub _guess_version {
 }
 
 sub install {
+    no if $] >= 5.018, warnings => "experimental::smartmatch";
 	my ($self) = @_;
 
 	$self->ruby_version( $self->_guess_version );
@@ -376,8 +385,14 @@ sub _make_install {
 	# TODO make more portable
 	# TODO make options depend on ruby version
 	# TODO make silent
-	# TODO make use of multicore CPUs
-	system "./configure --with-ssl --with-yaml --enable-ipv6 --enable-pthread --enable-shared --prefix=$prefix && make && make install";
+    my $cores = 1;
+    my $nproc = `which nproc`;
+    chomp $nproc;
+    if (-x $nproc){
+        $cores = `$nproc`;
+        chomp $cores;
+    }
+	system "./configure --with-ssl --with-yaml --enable-ipv6 --enable-pthread --enable-shared --prefix=$prefix && make -j$cores && make install";
 
 	chdir $cwd;
 
@@ -428,6 +443,8 @@ sub _clean_path {
 }
 
 sub _sub_shell {
+    # disable. find better way
+    return
 	my $self = shift;
 	my $shell = $ENV{SHELL};
 
@@ -499,7 +516,7 @@ This is an unstable development release not ready for production!
 
 =head1 VERSION
 
-Version 0.004003
+Version 0.004004
 
 =head1 SYNOPSIS
 
@@ -540,7 +557,7 @@ Additionally you can resemble gemsets from other users or machines by using rein
 =head2 agent_string
 
 The user agent used when downloading ruby.
-Defaults to Ruby::VersionManager/0.004003.
+Defaults to Ruby::VersionManager/0.004004.
 
 =head2 archive_type
 

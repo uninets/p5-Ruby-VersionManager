@@ -8,7 +8,7 @@ This is an unstable development release not ready for production!
 
 # VERSION
 
-Version 0.004003
+Version 0.004004
 
 # SYNOPSIS
 
@@ -23,19 +23,19 @@ Ruby::VersionManager comes with a script rvm.pl with following options.
 
 Show the version of Ruby::VersionManager.
 
-	rvm.pl version
+        rvm.pl version
 
 ## list
 
 List available ruby versions.
 
-	rvm.pl list
+        rvm.pl list
 
 ## updatedb
 
 Update database of available ruby versions.
 
-	rvm.pl updatedb
+        rvm.pl updatedb
 
 ## install
 
@@ -45,19 +45,19 @@ If you need to install a preview or rc version you will have to provide the full
 
 Latest ruby
 
-	rvm.pl install
+        rvm.pl install
 
 Latest ruby-1.8
 
-	rvm.pl install 1.8
+        rvm.pl install 1.8
 
 Install preview
 
-	rvm.pl install ruby-1.9.3-preview1
+        rvm.pl install ruby-1.9.3-preview1
 
 To use the Ruby::VersionManager source ruby\_vmanager.rc.
 
-	source ~/.ruby_vmanager/var/ruby_vmanager.rc
+        source ~/.ruby_vmanager/var/ruby_vmanager.rc
 
 After installation a subshell will be launched with the new settings.
 
@@ -66,7 +66,7 @@ After installation a subshell will be launched with the new settings.
 Remove a ruby version and the source dir including the downloaded archive.
 You have to provide the full exact version of the ruby you want to remove as shown with list.
 
-	rvm.pl uninstall ruby-1.9.3-preview1
+        rvm.pl uninstall ruby-1.9.3-preview1
 
 If you uninstall your currently active ruby version you have to install/activate another version manually.
 
@@ -74,25 +74,25 @@ If you uninstall your currently active ruby version you have to install/activate
 
 Pass arguments to the gem command.
 
-	rvm.pl gem install unicorn # installs unicorn
+        rvm.pl gem install unicorn # installs unicorn
 
 Additionally you can use reinstall to reinstall your complete gemset. With a file containing the output of 'gem list' you can reproduce gemsets.
 
-	rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
+        rvm.pl gem reinstall gem_list.txt # installs all gems in the list exactly as given
 
-	rvm.pl gem reinstall # reinstalls all installed gems
+        rvm.pl gem reinstall # reinstalls all installed gems
 
 ## gemset
 
 Switch to another set of gems and launch a subshell with the new settings.
 
-	rvm.pl gemset my_set
+        rvm.pl gemset my_set
 
 ## gemsets
 
 List gemsets of the currently used rubyversion.
 
-	rvm.pl gemsets
+        rvm.pl gemsets
 
 The current set is marked with an asterisk.
 
